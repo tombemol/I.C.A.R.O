@@ -1,0 +1,128 @@
+name: Publish Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Read version
+        id: meta
+        shell: bash
+        run: |
+          VERSION=$(node -e "console.log(JSON.parse(require('fs').readFileSync('package.json','utf8')).version)")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check existing release
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.meta.outputs.tag }}
+        shell: bash
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $TAG already exists; nothing to publish."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Node
+        if: steps.check.outputs.exists == 'false'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Java
+        if: steps.check.outputs.exists == 'false'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Rust Android targets
+        if: steps.check.outputs.exists == 'false'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,x86_64-linux-android
+
+      - name: Install
+        if: steps.check.outputs.exists == 'false'
+        run: npm install
+
+      - name: Resolve Android NDK
+        if: steps.check.outputs.exists == 'false'
+        shell: bash
+        run: |
+          NDK_DIR=$(find "$ANDROID_HOME/ndk" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          test -n "$NDK_DIR"
+          echo "NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
+
+      - name: Initialize Android project
+        if: steps.check.outputs.exists == 'false'
+        run: npm run android:init
+
+      - name: Build Android APK
+        if: steps.check.outputs.exists == 'false'
+        run: npm run android:build -- --debug
+
+      - name: Prepare release asset
+        if: steps.check.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        shell: bash
+        run: |
+          SOURCE="src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk"
+          TARGET="I.C.A.R.O-v${VERSION}-android-debug.apk"
+          test -f "$SOURCE"
+          cp "$SOURCE" "$TARGET"
+          echo "APK_PATH=$TARGET" >> "$GITHUB_ENV"
+
+      - name: Write release notes
+        if: steps.check.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        shell: bash
+        run: |
+          cat > RELEASE_NOTES.md <<EOF
+          ## I.C.A.R.O. v${VERSION}
+
+          Primeira release pública instalável do I.C.A.R.O. para Android.
+
+          ### Destaques
+          - Health Connect como fonte read-only de passos, distância e sessões de exercício
+          - Life Event Engine com proteção contra duplicidade
+          - XP, nível, streak e atributos persistentes
+          - Game feel e identidade visual do I.C.A.R.O.
+          - persistência local com SQLite
+
+          ### Android
+          O arquivo anexado é um **APK universal de debug**, destinado a testes da versão atual em aparelhos Android.
+
+          > Esta build ainda não é uma distribuição assinada de produção/Play Store.
+          EOF
+
+      - name: Publish GitHub Release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.meta.outputs.tag }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        shell: bash
+        run: |
+          gh release create "$TAG" "$APK_PATH#I.C.A.R.O. v$VERSION - Android APK (debug)" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "I.C.A.R.O. v$VERSION" \
+            --notes-file RELEASE_NOTES.md
