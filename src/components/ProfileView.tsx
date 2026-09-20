@@ -1,11 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { localDateKey } from '../lib/missionGenerator';
 import { usePlayerStore } from '../stores/usePlayerStore';
+import { useProgressStore } from '../stores/useProgressStore';
 import { difficultyLabels, objectiveLabels } from '../types/player';
+import { RankBadge } from './game/RankBadge';
 import { ProfileForm } from './ProfileForm';
 
 export function ProfileView() {
   const profile = usePlayerStore((state) => state.profile);
+  const { progress, hydrate } = useProgressStore();
   const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    void hydrate(localDateKey());
+  }, [hydrate]);
 
   if (!profile) return null;
 
@@ -13,9 +21,9 @@ export function ProfileView() {
     return (
       <section className="view-section" aria-labelledby="edit-profile-title">
         <div className="page-intro">
-          <p className="eyebrow">Ficha</p>
+          <p className="eyebrow">Ficha do jogador</p>
           <h1 id="edit-profile-title">Ajuste seu ponto de partida.</h1>
-          <p>Alterações ficam salvas no dispositivo e serão usadas pelo sistema de missões nas próximas versões.</p>
+          <p>Alterações ficam salvas no dispositivo e orientam a geração das próximas missões.</p>
         </div>
         <ProfileForm
           initialProfile={profile}
@@ -28,10 +36,17 @@ export function ProfileView() {
 
   return (
     <section className="view-section" aria-labelledby="profile-view-title">
-      <div className="page-intro">
-        <p className="eyebrow">Ficha</p>
-        <h1 id="profile-view-title">{profile.displayName}</h1>
-        <p>Seu contexto local para progressão. Sem ranking global, sem perfil público, sem circo.</p>
+      <div className="character-sheet-head">
+        <div>
+          <p className="eyebrow">Ficha do jogador</p>
+          <h1 id="profile-view-title">{profile.displayName}</h1>
+        </div>
+        {progress && (
+          <div className="character-sheet-level">
+            <strong>Nv. {progress.level}</strong>
+            <RankBadge level={progress.level} />
+          </div>
+        )}
       </div>
 
       <dl className="profile-summary">

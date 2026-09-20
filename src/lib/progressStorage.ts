@@ -1,5 +1,10 @@
 import type { DailyMission } from '../types/mission';
-import { initialPlayerProgress, type PlayerProgress } from '../types/progress';
+import {
+  emptyProgressStats,
+  initialPlayerProgress,
+  type PlayerProgress,
+  type ProgressStats,
+} from '../types/progress';
 
 const DATABASE_URL = 'sqlite:icaro.db';
 const WEB_PROGRESS_KEY = 'icaro.player-progress.v1';
@@ -38,13 +43,21 @@ function rowToProgress(row: ProgressRow): PlayerProgress {
   };
 }
 
-function previousDateKey(dateKey: string) {
+function shiftDateKey(dateKey: string, offset: number) {
   const date = new Date(`${dateKey}T12:00:00`);
-  date.setDate(date.getDate() - 1);
+  date.setDate(date.getDate() + offset);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function previousDateKey(dateKey: string) {
+  return shiftDateKey(dateKey, -1);
+}
+
+function lastDateKeys(referenceDate: string, amount: number) {
+  return Array.from({ length: amount }, (_, index) => shiftDateKey(referenceDate, index - amount + 1));
 }
 
 function applyReward(progress: PlayerProgress, mission: DailyMission): PlayerProgress {
@@ -104,6 +117,45 @@ export async function loadCompletedMissionIds(missionDate: string): Promise<stri
   );
 
   return rows.map((row) => row.mission_id);
+}
+
+export async function loadProgressStats(referenceDate: string): Promise<ProgressStats> {
+  const dates = lastDateKeys(referenceDate, 7);
+
+  if (!isTauriRuntime()) {
+    const completions = JSON.parse(localStorage.getItem(WEB_COMPLETION_KEY) ?? '{}') as CompletionRecord;
+    const values = Object.values(completions);
+    const counts = new Map<string, number>();
+
+    for (const completion of values) {
+      counts.set(completion.missionDate, (counts.get(completion.missionDate) ?? 0) + 1);
+    }
+
+    return {
+      totalCompleted: values.length,
+      last7Days: dates.map((date) => ({ date, count: counts.get(date) ?? 0 })),
+    };
+  }
+
+  const db = await getDatabase();
+  const totalRows = await db.select<Array<{ total: number | string }>>(
+    'SELECT COUNT(*) AS total FROM mission_completion',
+  );
+  const groupedRows = await db.select<Array<{ mission_date: string; count: number | string }>>(
+    `SELECT mission_date, COUNT(*) AS count
+     FROM mission_completion
+     WHERE mission_date >= $1 AND mission_date <= $2
+     GROUP BY mission_date`,
+    [dates[0], referenceDate],
+  );
+
+  const counts = new Map(groupedRows.map((row) => [row.mission_date, Number(row.count)]));
+
+  return {
+    ...emptyProgressStats(),
+    totalCompleted: Number(totalRows[0]?.total ?? 0),
+    last7Days: dates.map((date) => ({ date, count: counts.get(date) ?? 0 })),
+  };
 }
 
 export async function completeMissionAndAward(mission: DailyMission): Promise<{

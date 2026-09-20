@@ -1,3 +1,4 @@
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { BottomNav, type AppTab } from './components/BottomNav';
 import { ExerciseCatalog } from './components/ExerciseCatalog';
@@ -10,6 +11,7 @@ import { usePlayerStore } from './stores/usePlayerStore';
 export function App() {
   const { profile, hydrationStatus, hydrationError, hydrate } = usePlayerStore();
   const [tab, setTab] = useState<AppTab>('today');
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     void hydrate();
@@ -54,10 +56,21 @@ export function App() {
         </button>
       </header>
 
-      {tab === 'today' && <TodayView />}
-      {tab === 'exercises' && <ExerciseCatalog />}
-      {tab === 'progress' && <ProgressView />}
-      {tab === 'profile' && <ProfileView />}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={tab}
+          className="tab-stage"
+          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+          transition={{ duration: reduceMotion ? 0 : 0.18 }}
+        >
+          {tab === 'today' && <TodayView />}
+          {tab === 'exercises' && <ExerciseCatalog />}
+          {tab === 'progress' && <ProgressView />}
+          {tab === 'profile' && <ProfileView />}
+        </motion.div>
+      </AnimatePresence>
 
       <BottomNav active={tab} onChange={setTab} />
     </main>

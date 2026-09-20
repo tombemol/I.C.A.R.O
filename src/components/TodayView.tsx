@@ -1,12 +1,13 @@
-import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { localDateKey } from '../lib/missionGenerator';
 import { useMissionStore } from '../stores/useMissionStore';
 import { usePlayerStore } from '../stores/usePlayerStore';
 import { useProgressStore } from '../stores/useProgressStore';
 import type { DailyMission } from '../types/mission';
+import { difficultyLabels } from '../types/player';
+import { LevelUpOverlay } from './game/LevelUpOverlay';
+import { PlayerHud } from './game/PlayerHud';
 import { MissionRow } from './MissionRow';
-import { ProgressRing } from './ProgressRing';
 
 export function TodayView() {
   const profile = usePlayerStore((state) => state.profile);
@@ -21,6 +22,8 @@ export function TodayView() {
     completeMission,
   } = useProgressStore();
 
+  const [recentCompletionId, setRecentCompletionId] = useState<string | null>(null);
+  const [levelUp, setLevelUp] = useState<number | null>(null);
   const today = localDateKey();
 
   useEffect(() => {
@@ -30,51 +33,61 @@ export function TodayView() {
     }
   }, [profile, hydrateForProfile, hydrateProgress, today]);
 
+  useEffect(() => {
+    if (!recentCompletionId) return;
+    const timer = window.setTimeout(() => setRecentCompletionId(null), 900);
+    return () => window.clearTimeout(timer);
+  }, [recentCompletionId]);
+
+  useEffect(() => {
+    if (levelUp === null) return;
+    const timer = window.setTimeout(() => setLevelUp(null), 1500);
+    return () => window.clearTimeout(timer);
+  }, [levelUp]);
+
   const level = progress?.level ?? 1;
   const xp = progress?.xp ?? 0;
   const xpToNext = progress?.xpToNext ?? 500;
   const streak = progress?.streak ?? 0;
-  const levelProgress = (xp / xpToNext) * 100;
   const completedCount = missions.filter((mission) => completedMissionIds.includes(mission.id)).length;
 
   const handleComplete = async (mission: DailyMission) => {
-    await completeMission(mission);
+    const previousLevel = useProgressStore.getState().progress?.level ?? 1;
+    const inserted = await completeMission(mission);
+
+    if (!inserted) return;
+
+    const nextLevel = useProgressStore.getState().progress?.level ?? previousLevel;
+    setRecentCompletionId(mission.id);
+
+    if (nextLevel > previousLevel) {
+      setLevelUp(nextLevel);
+    }
   };
 
   return (
     <>
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero__copy">
-          <p className="eyebrow">Jornada de hoje</p>
-          <h1 id="hero-title">Continue subindo, {profile?.displayName}.</h1>
-          <p>Seu progresso não precisa ser épico hoje. Precisa ser real.</p>
+      <section className="today-hero" aria-labelledby="today-message">
+        <PlayerHud
+          name={profile?.displayName ?? 'Jogador'}
+          level={level}
+          xp={xp}
+          xpToNext={xpToNext}
+          streak={streak}
+          completedMissions={completedCount}
+          totalMissions={missions.length || 3}
+        />
+        <div className="today-message">
+          <p id="today-message">Continue subindo.</p>
+          <span>Seu progresso precisa ser real, não espetacular.</span>
         </div>
-
-        <motion.div
-          className="level-panel"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-        >
-          <ProgressRing value={levelProgress} label={'Nv. ' + level} detail={xp + ' / ' + xpToNext + ' XP'} />
-          <div className="level-panel__stats">
-            <div>
-              <span>Sequência</span>
-              <strong>{streak} {streak === 1 ? 'dia' : 'dias'}</strong>
-            </div>
-            <div>
-              <span>Missões</span>
-              <strong>{missionStatus === 'ready' ? completedCount + ' / ' + missions.length : '…'}</strong>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
       <section className="section-block" aria-labelledby="missions-title">
         <div className="section-heading">
           <div>
             <p className="eyebrow">Missões diárias</p>
-            <h2 id="missions-title">Feitas para sua ficha.</h2>
+            <h2 id="missions-title">{missions.length || 3} missões disponíveis</h2>
           </div>
           <span className="section-date">Hoje</span>
         </div>
@@ -106,8 +119,10 @@ export function TodayView() {
               <MissionRow
                 key={mission.id}
                 mission={mission}
+                difficulty={profile ? difficultyLabels[profile.difficulty] : 'Padrão'}
                 completed={completedMissionIds.includes(mission.id)}
                 isCompleting={completingMissionId === mission.id}
+                celebrate={recentCompletionId === mission.id}
                 onComplete={handleComplete}
               />
             ))}
@@ -116,9 +131,11 @@ export function TodayView() {
       </section>
 
       <section className="principle-strip" aria-label="Regra de progressão">
-        <span>Progressão</span>
-        <strong>Cada missão concede XP uma única vez. Fechar e abrir o app não duplica recompensa.</strong>
+        <span>Regra do sistema</span>
+        <strong>Uma missão, uma recompensa. XP não duplica ao reabrir ou tocar duas vezes.</strong>
       </section>
+
+      <LevelUpOverlay level={levelUp} onDismiss={() => setLevelUp(null)} />
     </>
   );
 }

@@ -3,14 +3,20 @@ import {
   completeMissionAndAward,
   loadCompletedMissionIds,
   loadPlayerProgress,
+  loadProgressStats,
 } from '../lib/progressStorage';
 import type { DailyMission } from '../types/mission';
-import type { PlayerProgress } from '../types/progress';
+import {
+  emptyProgressStats,
+  type PlayerProgress,
+  type ProgressStats,
+} from '../types/progress';
 
 type ProgressStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 type ProgressState = {
   progress: PlayerProgress | null;
+  completionStats: ProgressStats;
   completedMissionIds: string[];
   missionDate: string | null;
   status: ProgressStatus;
@@ -22,6 +28,7 @@ type ProgressState = {
 
 export const useProgressStore = create<ProgressState>((set, get) => ({
   progress: null,
+  completionStats: emptyProgressStats(),
   completedMissionIds: [],
   missionDate: null,
   status: 'idle',
@@ -35,13 +42,15 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ status: 'loading', error: null });
 
     try {
-      const [progress, completedMissionIds] = await Promise.all([
+      const [progress, completedMissionIds, completionStats] = await Promise.all([
         loadPlayerProgress(),
         loadCompletedMissionIds(missionDate),
+        loadProgressStats(missionDate),
       ]);
 
       set({
         progress,
+        completionStats,
         completedMissionIds,
         missionDate,
         status: 'ready',
@@ -63,9 +72,19 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     try {
       const { progress, inserted } = await completeMissionAndAward(mission);
+      let completionStats = get().completionStats;
+
+      if (inserted) {
+        try {
+          completionStats = await loadProgressStats(mission.missionDate);
+        } catch {
+          // Estatísticas são derivadas. A recompensa persistida continua sendo a fonte da verdade.
+        }
+      }
 
       set((state) => ({
         progress,
+        completionStats,
         completedMissionIds: inserted
           ? [...state.completedMissionIds, mission.id]
           : state.completedMissionIds,
