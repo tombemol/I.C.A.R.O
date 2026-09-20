@@ -62,3 +62,11 @@ jobs:
 
       - name: Android debug build
         run: npm run android:build -- --debug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: icaro-0.4.0-debug-apk
+          path: src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk
+          if-no-files-found: error
+          retention-days: 14
