@@ -21,7 +21,6 @@ A 0.3.0 fecha o primeiro ciclo completo de progressão local:
 - sequência diária persistente;
 - proteção contra recompensa duplicada;
 - CI de TypeScript/Vite;
-- fluxo de release por branch + Pull Request;
 - teste Android no PC documentado com Android Emulator.
 
 ## Ciclo atual
@@ -134,22 +133,6 @@ Guia completo: [`docs/ANDROID_TESTING.md`](./docs/ANDROID_TESTING.md).
 | `0.5.0` | Histórico e visualização da evolução | Planejada |
 | `0.6.0` | Notificações, refinamento e preparação de distribuição | Planejada |
 
-## Processo de versão
-
-Cada versão é desenvolvida numa branch `release/X.Y.Z` e acompanhada por um Pull Request para `main`. O PR começa como draft enquanto a versão está em construção.
-
-Toda versão atualiza no mesmo ciclo:
-
-1. código;
-2. `CHANGELOG.md`;
-3. números de versão;
-4. **README.md**;
-5. `DESIGN.md` quando a linguagem visual mudar;
-6. PR com resumo, escopo e validação;
-7. CI antes do merge.
-
-Detalhes: [`docs/RELEASE_PROCESS.md`](./docs/RELEASE_PROCESS.md).
-
 ## Desenvolvimento
 
 Frontend rápido:
@@ -205,8 +188,7 @@ src-tauri/
 
 docs/
 ├── ANDROID_TESTING.md
-├── PRODUCT.md
-└── RELEASE_PROCESS.md
+└── PRODUCT.md
 ```
 
 ## Licença
