@@ -1,0 +1,163 @@
+.health-connect-panel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  margin: 4px 0 30px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.health-connect-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(240, 183, 74, .45);
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.health-connect-mark.is-muted {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--muted);
+}
+
+.health-connect-copy,
+.health-connect-title {
+  display: grid;
+  gap: 4px;
+}
+
+.health-connect-copy > span,
+.health-connect-title > span {
+  color: var(--muted);
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.health-connect-copy > strong,
+.health-connect-title > strong {
+  color: var(--soft);
+  font-size: .9rem;
+}
+
+.health-connect-copy p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.health-connect-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.health-connect-stats div {
+  display: grid;
+  gap: 3px;
+}
+
+.health-connect-stats span {
+  color: var(--muted);
+  font-size: .62rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.health-connect-stats strong {
+  color: var(--soft);
+  font-size: .84rem;
+}
+
+.health-connect-actions {
+  display: grid;
+  justify-items: end;
+  gap: 7px;
+}
+
+.health-connect-action,
+.health-connect-link {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.health-connect-action {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.health-connect-action.is-primary {
+  border-color: rgba(240, 183, 74, .48);
+  color: var(--accent);
+}
+
+.health-connect-action:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.health-connect-link {
+  padding: 3px;
+  font-size: .67rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.health-connect-success {
+  color: var(--accent) !important;
+}
+
+.health-connect-warning {
+  color: #c8a66e !important;
+}
+
+.mission-auto-validation {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  margin: 12px 0 0 !important;
+  color: var(--muted) !important;
+  font-size: .69rem !important;
+}
+
+.mission-auto-validation::before {
+  content: "◇";
+  color: var(--accent);
+}
+
+@media (max-width: 520px) {
+  .health-connect-panel {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .health-connect-actions {
+    grid-column: 2;
+    grid-auto-flow: column;
+    justify-content: start;
+    justify-items: start;
+  }
+
+  .health-connect-stats {
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+  }
+}

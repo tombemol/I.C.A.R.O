@@ -1,30 +1,17 @@
-# Testar o I.C.A.R.O. como Android no PC
+# Testar o I.C.A.R.O. 0.4.0 no Android
 
-O teste recomendado usa o Android Emulator oficial. Ele cria um Android Virtual Device (AVD) que funciona como um celular ou tablet Android dentro do PC.
+A 0.4.0 usa APIs nativas, então o navegador serve para layout, mas não valida Health Connect.
 
-## O que isso testa de verdade
+## Requisitos
 
-Diferente do modo responsivo do navegador, o emulador executa:
+- Android Studio;
+- SDK / Platform Tools / Build Tools;
+- NDK;
+- JDK 17;
+- targets Rust Android;
+- AVD Android 14 / API 34 ou superior recomendado.
 
-- o pacote Android gerado pelo Tauri;
-- o WebView do Android;
-- SQLite nativo;
-- lifecycle do app;
-- permissões Android;
-- densidade, resolução, rotação e navegação do sistema;
-- integrações Android futuras, incluindo Health Connect quando a fase chegar.
-
-## 1. Instalar o ambiente
-
-Instale o Android Studio e, no SDK Manager, confirme:
-
-- Android SDK Platform;
-- Android SDK Platform-Tools;
-- Android SDK Build-Tools;
-- Android SDK Command-line Tools;
-- NDK (Side by side).
-
-No Windows, configure as variáveis:
+No Windows:
 
 ```powershell
 [System.Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Android\Android Studio\jbr", "User")
@@ -34,89 +21,66 @@ $VERSION = Get-ChildItem -Name "$env:LocalAppData\Android\Sdk\ndk" | Select-Obje
 [System.Environment]::SetEnvironmentVariable("NDK_HOME", "$env:LocalAppData\Android\Sdk\ndk\$VERSION", "User")
 ```
 
-Depois reinicie o terminal/IDE e adicione os targets Rust:
+Targets Rust:
 
 ```powershell
 rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
 ```
 
-## 2. Criar um celular virtual
-
-No Android Studio:
-
-1. abra **Tools > Device Manager**;
-2. escolha **Create Virtual Device**;
-3. crie um perfil de telefone, como um Pixel;
-4. escolha uma imagem Android recente;
-5. conclua e inicie o AVD.
-
-Para a futura integração Health Connect, prefira **Android 14 / API 34 ou superior** com Google Play Services.
-
-## 3. Inicializar Android no projeto
-
-Na raiz do I.C.A.R.O.:
+## Inicializar e rodar
 
 ```bash
 npm install
 npm run android:init
-```
-
-Isso gera o projeto Android de suporte em `src-tauri/gen/android`.
-
-O diretório `src-tauri/gen` fica fora do Git de propósito: é código gerado pelo Tauri.
-
-## 4. Rodar no emulador
-
-Com o AVD aberto:
-
-```bash
 npm run android:dev
 ```
 
-O Tauri compila, instala e abre o I.C.A.R.O. no dispositivo virtual.
+O diretório `src-tauri/gen` é gerado e não deve ser versionado.
 
-Para abrir o projeto nativo no Android Studio:
+## Health Connect
 
-```bash
-npm run android:studio
-```
+Na tela Hoje:
 
-## 5. Debug do WebView
+1. confirme que aparece o bloco **Vida real conectada**;
+2. toque em **Conectar**;
+3. conceda uma ou mais permissões de leitura;
+4. volte ao I.C.A.R.O.;
+5. use **Sincronizar**;
+6. confira o resumo de passos, distância e treino;
+7. confira eventos recentes em Progresso;
+8. se uma quest compatível já atingiu a meta, confirme a conclusão automática;
+9. sincronize novamente e confirme que XP não duplica.
 
-Com o app Android em modo debug e o emulador conectado, abra no Chrome do PC:
+Também teste:
+
+- negar todas as permissões;
+- liberar apenas uma métrica;
+- revogar acesso nas configurações;
+- Health Connect sem dados no dia;
+- app sem Health Connect disponível;
+- conclusão manual com integração desconectada.
+
+## O que deve permanecer verdadeiro
+
+- nenhum prompt abre sem ação do usuário;
+- dados brutos não concedem XP;
+- sincronização repetida não duplica recompensa;
+- uma falha de leitura de uma métrica não impede as demais;
+- o app continua útil sem integração;
+- a fonte do evento aparece como Health Connect quando aplicável.
+
+## Debug
+
+Com o app em debug:
 
 ```text
 chrome://inspect/#devices
 ```
 
-Isso permite inspecionar HTML, CSS, console e rede do WebView Android.
-
-## 6. Testes que vale repetir
-
-Crie pelo menos dois AVDs:
-
-- telefone normal em retrato;
-- tablet ou dispositivo redimensionável.
-
-Cheque:
-
-- onboarding em tela estreita;
-- teclado virtual sobre formulários;
-- navegação inferior;
-- rotação;
-- reabertura do app com SQLite persistido;
-- cold start;
-- textos com escala de fonte aumentada;
-- botão Voltar do Android.
-
-## Atalho visual
-
-`npm run dev` continua útil para ajustar layout rapidamente no navegador, mas ele não substitui o emulador quando o comportamento depende de Tauri, SQLite ou APIs Android.
-
-## Build Android
-
-Quando quiser gerar APK/AAB:
+## Build
 
 ```bash
 npm run android:build
 ```
+
+O CI da release também executa compilação Android como smoke test. O emulador local continua necessário para validar prompts, permissões e dados reais do provedor.
