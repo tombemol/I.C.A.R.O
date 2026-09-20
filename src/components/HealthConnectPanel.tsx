@@ -32,6 +32,7 @@ export function HealthConnectPanel({ missions }: HealthConnectPanelProps) {
     openSettings,
   } = useHealthConnectStore();
   const hydrateProgress = useProgressStore((state) => state.hydrate);
+  const progressStatus = useProgressStore((state) => state.status);
   const hydrateLifeEngine = useLifeEngineStore((state) => state.hydrate);
   const today = localDateKey();
 
@@ -54,6 +55,7 @@ export function HealthConnectPanel({ missions }: HealthConnectPanelProps) {
       status !== 'ready'
       || !availability?.available
       || !permissions?.granted.length
+      || progressStatus !== 'ready'
       || missions.length === 0
       || lastSyncDate === today
     ) {
@@ -66,6 +68,7 @@ export function HealthConnectPanel({ missions }: HealthConnectPanelProps) {
     lastSyncDate,
     missions.length,
     permissions,
+    progressStatus,
     status,
     syncAndRefresh,
     today,
@@ -76,12 +79,12 @@ export function HealthConnectPanel({ missions }: HealthConnectPanelProps) {
   const granted = permissions?.granted ?? [];
   const hasAny = requiredHealthMetrics.some((metric) => granted.includes(metric));
   const hasAll = requiredHealthMetrics.every((metric) => granted.includes(metric));
-  const isBusy = ['checking', 'requesting', 'syncing'].includes(status);
+  const isBusy = ['checking', 'requesting', 'syncing'].includes(status) || progressStatus === 'loading';
 
   const handleConnect = async () => {
     const next = await requestAccess();
     if (!next?.granted.length) return;
-    await syncAndRefresh(true);
+    if (progressStatus === 'ready') await syncAndRefresh(true);
   };
 
   if (!availability || status === 'checking') {
