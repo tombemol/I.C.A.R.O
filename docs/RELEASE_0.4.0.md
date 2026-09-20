@@ -2,61 +2,66 @@
 
 ## Objetivo
 
-Trocar parte da conclusão manual por evidência vinda do Android, mantendo o I.C.A.R.O. offline-first e com permissões explícitas.
+Usar atividade real do Android como evidência de progressão, sem tornar o Health Connect obrigatório.
 
-## Estratégia técnica
+## Implementação
 
-A integração será implementada por uma camada nativa Android em Kotlin exposta ao Tauri por plugin mobile. O código não deve viver apenas em `src-tauri/gen/android`, porque esse diretório é gerado e ignorado pelo Git.
-
-## Dados iniciais
-
-Primeiro recorte:
+A integração usa um plugin Tauri de saúde fixado em um commit conhecido e com apenas três recursos habilitados:
 
 - passos;
 - distância;
 - sessões de exercício.
 
-Permissões de leitura previstas:
+O plugin fornece a ponte nativa para Health Connect. O código de domínio do I.C.A.R.O. continua separado da API Android.
 
-- `android.permission.health.READ_STEPS`;
-- `android.permission.health.READ_DISTANCE`;
-- `android.permission.health.READ_EXERCISE`.
-
-A implementação pedirá apenas as permissões necessárias para recursos habilitados.
-
-## Fluxo
+## Pipeline
 
 ```mermaid
 flowchart LR
-  HC[Health Connect] --> K[Kotlin]
-  K --> P[Plugin Tauri]
-  P --> TS[TypeScript]
-  TS --> EVENT[Life Event Engine]
-  EVENT --> V[Validador de missão]
-  V --> DB[(SQLite)]
+  HC[Health Connect] --> SNAP[Snapshot diário]
+  SNAP --> EVENT[Life Event]
+  EVENT --> RULE[Regra]
+  RULE --> QUEST[Missão]
+  QUEST --> DB[(SQLite)]
   DB --> XP[XP / nível / streak]
 ```
 
-## Fases
+## Regras
 
-1. plugin móvel e detecção de disponibilidade;
-2. fluxo de permissões;
-3. leitura de passos/distância/exercícios;
-4. normalização para um snapshot diário;
-5. conversão em Life Events;
-6. validação automática das missões compatíveis;
-7. fallback manual para missões que não possam ser verificadas;
-8. testes no Android Emulator;
-9. README, CHANGELOG e DESIGN.
+1. Health Connect é evidência, nunca economia.
+2. Passos e distância do mesmo dia são atualizados por upsert.
+3. Treinos têm chave idempotente por sessão.
+4. Atividade bruta entra sem pontos de atributo.
+5. A recompensa só acontece pela conclusão de missão.
+6. Manual e automático compartilham a mesma proteção contra duplicidade.
+7. Permissões são solicitadas apenas depois de ação explícita.
+8. O app funciona sem integração.
 
-## Teste alvo
+## Cobertura automática inicial
 
-Usar Android Emulator com Android 14 / API 34 ou superior e Google Play Services. Health Connect faz parte do framework no Android 14+, o que simplifica o ambiente de teste.
+- distância diária;
+- minutos totais de exercício;
+- minutos de caminhada;
+- maior sessão contínua;
+- minutos de yoga/pilates para mobilidade.
 
-## Segurança e privacidade
+Repetições continuam manuais porque o dado disponível não comprova a execução de cada repetição.
 
-- sem upload obrigatório para nuvem;
-- solicitar o mínimo de permissões;
-- explicar o motivo de cada permissão antes do prompt do sistema;
-- permitir que o app continue útil sem Health Connect;
-- manter a decisão final de permissões com o usuário.
+## Privacidade
+
+- read-only;
+- local-first;
+- sem nuvem obrigatória;
+- permissões mínimas;
+- acesso parcial suportado;
+- usuário pode gerenciar/revogar no Android.
+
+## Validação da release
+
+- frontend TypeScript + Vite;
+- build Android automatizado;
+- roteiro de runtime/emulador documentado em `ANDROID_TESTING.md`.
+
+## Resultado
+
+A 0.4.0 é o primeiro ponto em que o I.C.A.R.O. realmente recebe a vida do usuário como input em vez de depender apenas do usuário declarar que cumpriu uma tarefa.

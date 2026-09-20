@@ -23,3 +23,42 @@ jobs:
 
       - name: TypeScript and Vite build
         run: npm run build
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Rust Android targets
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,x86_64-linux-android
+
+      - name: Install
+        run: npm install
+
+      - name: Resolve Android NDK
+        shell: bash
+        run: |
+          NDK_DIR=$(find "$ANDROID_HOME/ndk" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          test -n "$NDK_DIR"
+          echo "NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
+
+      - name: Initialize Android project
+        run: npm run android:init
+
+      - name: Android debug build
+        run: npm run android:build -- --debug

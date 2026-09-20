@@ -1,6 +1,6 @@
 [package]
 name = "icaro"
-version = "0.3.2"
+version = "0.4.0"
 description = "I.C.A.R.O. — RPG open source de evolução pessoal"
 authors = ["tombemol"]
 edition = "2021"

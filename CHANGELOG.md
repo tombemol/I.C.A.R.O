@@ -2,6 +2,30 @@
 
 Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 
+## [0.4.0] - 2026-09-20
+
+### Adicionado
+- Integração read-only com Health Connect.
+- Detecção de disponibilidade do provedor.
+- Fluxo explícito de permissões para passos, distância e sessões de exercício.
+- Suporte a permissões parciais e gerenciamento pelo sistema.
+- Snapshot diário normalizado com passos, distância, minutos ativos, caminhada, mobilidade e maior sessão.
+- Life Events de evidência para passos, distância e sessões.
+- Upsert idempotente para métricas que mudam durante o dia.
+- Regras de validação automática de missões compatíveis.
+- Painel Health Connect na tela Hoje.
+- Indicador de compatibilidade automática nas quests.
+- Fallback manual preservado.
+- Build Android incluído na validação de CI da release.
+
+### Alterado
+- Health Connect passa a fornecer evidência ao Life Event Engine em vez de conceder recompensa diretamente.
+- Conclusões automáticas usam a mesma tabela `mission_completion`, trigger de XP e proteção de duplicidade da conclusão manual.
+- Life Event de conclusão registra `HEALTH_CONNECT` como fonte quando validado automaticamente.
+- Android mínimo passa a API compatível com a integração de saúde.
+- README, PRODUCT, DESIGN e documentação Android atualizados.
+- Versões frontend, Rust e Tauri sincronizadas em 0.4.0.
+
 ## [0.3.2] - 2026-09-20
 
 ### Adicionado
@@ -13,94 +37,45 @@ Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 - Trigger para aplicar pontos de atributo no registro de eventos.
 - Backfill e reconciliação das missões já concluídas.
 - Serviço de conclusão que registra evento sem duplicar XP.
-- Contratos preparados para distância e duração vindas do Health Connect.
 - Atributos e eventos recentes na tela Progresso.
-- Documento técnico `docs/LIFE_EVENT_ENGINE.md`.
 
 ### Alterado
-- A arquitetura passa a usar o pipeline `vida real → evento → regra → progressão`.
-- A conclusão manual passa pelo mesmo motor preparado para fontes automáticas.
+- A arquitetura passa a usar `vida real → evento → regra → progressão`.
 - Produto reposicionado como RPG que usa a vida real como input.
-- README, PRODUCT e DESIGN atualizados para a nova direção.
-- Versões frontend, Rust e Tauri sincronizadas em 0.3.2.
 
 ## [0.3.1] - 2026-09-20
 
 ### Adicionado
-- HUD do jogador com nível, rank, XP, sequência e missões do dia.
-- Barra de XP animada.
-- Ranks visuais sem alterar a fórmula de progressão.
-- Missões apresentadas como quests.
-- Feedback imediato de conclusão e recompensa.
-- Overlay curto de level up.
-- Tela Progresso em formato de ficha de personagem.
-- Histórico visual dos últimos sete dias.
-- Navegação inferior refinada e compatível com safe area.
-- Transições discretas com suporte a `prefers-reduced-motion`.
-
-### Alterado
-- Perfil alinhado à linguagem visual da ficha do jogador.
-- Direção visual consolidada como RPG futurista sóbrio + HUD + fitness.
+- HUD do jogador, barra de XP, ranks e quests.
+- Feedback de recompensa e overlay de level up.
+- Ficha de personagem e histórico dos últimos sete dias.
+- Navegação refinada com safe area e reduced motion.
 
 ## [0.3.0] - 2026-09-20
 
 ### Adicionado
-- Persistência de XP, nível, sequência e último dia ativo.
-- Migration `player_progress` e `mission_completion`.
-- Trigger SQLite que concede XP e atualiza sequência apenas na primeira conclusão de cada missão.
-- Conclusão manual de missões na tela Hoje.
-- Estado visual de missão concluída.
-- Resumo de progresso ligado aos dados persistidos.
-- Branch e PR dedicados para a versão.
-- Guia de teste Android no PC com Android Emulator.
-- Scripts `android:init`, `android:dev`, `android:studio` e `android:build`.
-
-### Alterado
-- Valores demonstrativos de nível/XP/streak foram removidos do Player Store.
-- A tela Progresso agora lê dados reais do armazenamento local.
-- Processo de release formalizado em `docs/RELEASE_PROCESS.md`.
+- Persistência de XP, nível, sequência e conclusões.
+- Trigger SQLite idempotente de recompensa.
+- Conclusão manual de missões.
+- Guia e scripts Android.
 
 ## [0.2.0] - 2026-09-20
 
 ### Adicionado
-- Gerador determinístico de três missões diárias.
-- Missões adaptadas ao objetivo e à dificuldade da ficha.
-- Multiplicadores de meta e XP por dificuldade.
-- Persistência das missões do dia em SQLite.
-- Migration `daily_mission` com índice por data.
-- Fallback de missões para localStorage no preview web.
-- Tratamento visual para carregamento e falha do gerador.
-- GitHub Actions para validar TypeScript e build Vite em cada push na `main`.
-
-### Alterado
-- Tela Hoje não depende mais de missões hardcoded.
-- A ficha agora explica que objetivo e dificuldade alimentam o gerador diário.
-- README atualizado para a 0.2.0.
+- Gerador determinístico de missões diárias.
+- Persistência de missões em SQLite.
+- GitHub Actions para TypeScript e Vite.
 
 ## [0.1.0] - 2026-09-20
 
 ### Adicionado
-- Ficha inicial do jogador com nome, altura, peso, objetivo e dificuldade.
-- Persistência nativa SQLite via plugin SQL oficial do Tauri.
-- Migration inicial versionada para `player_profile`.
-- Fallback para localStorage durante preview no navegador.
-- Catálogo inicial de exercícios com filtros por categoria.
-- Tela de perfil com edição da ficha.
-- Tela de progresso com resumo de XP, nível e sequência.
-- `DESIGN.md` registrando o sistema visual do projeto.
-
-### Alterado
-- Navegação principal agora possui Hoje, Exercícios, Progresso e Perfil.
-- Interface refinada para reduzir cards aninhados e melhorar leitura em telas pequenas.
-- README atualizado para refletir o estado da 0.1.0.
+- Ficha inicial persistida.
+- Catálogo de exercícios.
+- Tela de perfil e progresso.
+- Design system.
 
 ## [0.0.1] - 2026-09-20
 
 ### Adicionado
-- Scaffold React + TypeScript + Vite.
-- Estrutura inicial Tauri 2 para desktop/mobile.
-- Dashboard mobile-first da jornada diária.
-- Protótipo de nível, XP, sequência e missões.
-- Store inicial de jogador com Zustand.
-- Documento de produto e princípios visuais.
-- README versionado junto da release.
+- Scaffold React + TypeScript + Vite + Tauri.
+- Dashboard mobile-first inicial.
