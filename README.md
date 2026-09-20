@@ -87,6 +87,28 @@ A referência visual oficial é **[Impeccable](https://impeccable.style/)**.
 
 O sistema local está em [`DESIGN.md`](./DESIGN.md). A interface prioriza hierarquia, leitura rápida, divisores e spacing em vez de despejar card em cima de card até a tela pedir socorro.
 
+## Testar como Android no PC
+
+O caminho recomendado é o **Android Emulator do Android Studio**. Ele executa o app Android de verdade em um dispositivo virtual, então SQLite, WebView, permissões e código Tauri mobile passam pelo ambiente Android em vez de uma simples simulação de tela.
+
+Depois de configurar o ambiente:
+
+```bash
+npm install
+npm run android:init
+npm run android:dev
+```
+
+Com um AVD já aberto, `android:dev` instala e executa o app nele em modo de desenvolvimento.
+
+Para abrir o projeto Android gerado no Android Studio:
+
+```bash
+npm run android:studio
+```
+
+Guia completo: [`docs/ANDROID_TESTING.md`](./docs/ANDROID_TESTING.md).
+
 ## Roadmap
 
 | Versão | Foco | Estado |
@@ -94,12 +116,14 @@ O sistema local está em [`DESIGN.md`](./DESIGN.md). A interface prioriza hierar
 | `0.0.1` | Scaffold Android/Tauri e primeira identidade visual | ✅ |
 | `0.1.0` | Ficha, SQLite e catálogo de exercícios | ✅ |
 | `0.2.0` | Missões diárias baseadas na ficha e dificuldade | ✅ |
-| `0.3.0` | XP, level, streak e regras de progressão persistentes | Próxima |
+| `0.3.0` | XP, level, streak e regras de progressão persistentes | Em desenvolvimento |
 | `0.4.0` | Health Connect e integração com smartwatch | Planejada |
 | `0.5.0` | Histórico e visualização da evolução | Planejada |
 | `0.6.0` | Notificações, refinamento e preparação de distribuição | Planejada |
 
-## Regra de release
+## Processo de versão
+
+Cada versão é desenvolvida numa branch `release/X.Y.Z` e acompanhada por um Pull Request para `main`. O PR pode começar como draft enquanto a versão ainda está em construção. O merge só acontece quando a release está fechada e validada.
 
 Toda versão atualiza no mesmo ciclo:
 
@@ -107,7 +131,10 @@ Toda versão atualiza no mesmo ciclo:
 2. `CHANGELOG.md`;
 3. números de versão;
 4. **README.md**;
-5. `DESIGN.md` quando a linguagem visual mudar.
+5. `DESIGN.md` quando a linguagem visual mudar;
+6. PR da versão com resumo e validação.
+
+Detalhes: [`docs/RELEASE_PROCESS.md`](./docs/RELEASE_PROCESS.md).
 
 ## Desenvolvimento
 
@@ -116,7 +143,7 @@ npm install
 npm run dev
 ```
 
-Para Tauri:
+Para Tauri desktop:
 
 ```bash
 npm run tauri dev
@@ -148,7 +175,9 @@ src-tauri/
 └── src/
 
 docs/
-└── PRODUCT.md
+├── ANDROID_TESTING.md
+├── PRODUCT.md
+└── RELEASE_PROCESS.md
 ```
 
 ## Licença
