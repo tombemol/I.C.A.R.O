@@ -2,6 +2,23 @@
 
 Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 
+## [0.1.0] - 2026-09-20
+
+### Adicionado
+- Ficha inicial do jogador com nome, altura, peso, objetivo e dificuldade.
+- Persistência nativa SQLite via plugin SQL oficial do Tauri.
+- Migration inicial versionada para `player_profile`.
+- Fallback para localStorage durante preview no navegador.
+- Catálogo inicial de exercícios com filtros por categoria.
+- Tela de perfil com edição da ficha.
+- Tela de progresso com resumo de XP, nível e sequência.
+- `DESIGN.md` registrando o sistema visual do projeto.
+
+### Alterado
+- Navegação principal agora possui Hoje, Exercícios, Progresso e Perfil.
+- Interface refinada para reduzir cards aninhados e melhorar leitura em telas pequenas.
+- README atualizado para refletir o estado da 0.1.0.
+
 ## [0.0.1] - 2026-09-20
 
 ### Adicionado

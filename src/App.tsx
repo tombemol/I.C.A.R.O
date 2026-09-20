@@ -1,12 +1,46 @@
-import { motion } from 'framer-motion';
-import { dailyMissions } from './data/missions';
-import { MissionRow } from './components/MissionRow';
-import { ProgressRing } from './components/ProgressRing';
+import { useEffect, useState } from 'react';
+import { BottomNav, type AppTab } from './components/BottomNav';
+import { ExerciseCatalog } from './components/ExerciseCatalog';
+import { Onboarding } from './components/Onboarding';
+import { ProfileView } from './components/ProfileView';
+import { ProgressView } from './components/ProgressView';
+import { TodayView } from './components/TodayView';
 import { usePlayerStore } from './stores/usePlayerStore';
 
 export function App() {
-  const { level, xp, xpToNext, streak, name } = usePlayerStore();
-  const levelProgress = (xp / xpToNext) * 100;
+  const { profile, hydrationStatus, hydrationError, hydrate } = usePlayerStore();
+  const [tab, setTab] = useState<AppTab>('today');
+
+  useEffect(() => {
+    void hydrate();
+  }, [hydrate]);
+
+  if (hydrationStatus === 'idle' || hydrationStatus === 'loading') {
+    return (
+      <main className="loading-shell">
+        <p className="brand">I.C.A.R.O.</p>
+        <div className="loading-line" aria-label="Carregando" />
+        <p>Preparando sua jornada local…</p>
+      </main>
+    );
+  }
+
+  if (hydrationStatus === 'error') {
+    return (
+      <main className="error-shell">
+        <p className="eyebrow">Persistência</p>
+        <h1>Não consegui abrir sua ficha.</h1>
+        <p>{hydrationError}</p>
+        <button className="button button--primary" type="button" onClick={() => void hydrate()}>
+          Tentar novamente
+        </button>
+      </main>
+    );
+  }
+
+  if (!profile) {
+    return <Onboarding />;
+  }
 
   return (
     <main className="app-shell">
@@ -15,64 +49,17 @@ export function App() {
           <p className="brand">I.C.A.R.O.</p>
           <p className="brand-subtitle">Índice de Condicionamento, Atividade, Rotina e Objetivos</p>
         </div>
-        <button className="avatar" aria-label="Abrir perfil">T</button>
+        <button className="avatar" type="button" aria-label="Abrir perfil" onClick={() => setTab('profile')}>
+          {profile.displayName.slice(0, 1).toUpperCase()}
+        </button>
       </header>
 
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero__copy">
-          <p className="eyebrow">Jornada de hoje</p>
-          <h1 id="hero-title">Continue subindo, {name}.</h1>
-          <p>Seu progresso não precisa ser épico hoje. Precisa ser real.</p>
-          <div className="hero__actions">
-            <button className="button button--primary">Registrar atividade</button>
-            <button className="button button--quiet">Ver histórico</button>
-          </div>
-        </div>
+      {tab === 'today' && <TodayView />}
+      {tab === 'exercises' && <ExerciseCatalog />}
+      {tab === 'progress' && <ProgressView />}
+      {tab === 'profile' && <ProfileView />}
 
-        <motion.div
-          className="level-panel"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-        >
-          <ProgressRing value={levelProgress} label={`Nv. ${level}`} detail={`${xp} / ${xpToNext} XP`} />
-          <div className="level-panel__stats">
-            <div>
-              <span>Sequência</span>
-              <strong>{streak} dias</strong>
-            </div>
-            <div>
-              <span>Missões</span>
-              <strong>0 / {dailyMissions.length}</strong>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      <section className="section-block" aria-labelledby="missions-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Missões diárias</p>
-            <h2 id="missions-title">Três coisas. Sem teatro.</h2>
-          </div>
-          <span className="section-date">Hoje</span>
-        </div>
-        <div className="mission-list">
-          {dailyMissions.map((mission) => <MissionRow key={mission.id} mission={mission} />)}
-        </div>
-      </section>
-
-      <section className="principle-strip" aria-label="Princípio do dia">
-        <span>Princípio do dia</span>
-        <strong>Consistência vence intensidade que não dura.</strong>
-      </section>
-
-      <nav className="bottom-nav" aria-label="Navegação principal">
-        <button className="bottom-nav__item is-active"><span>⌂</span>Hoje</button>
-        <button className="bottom-nav__item"><span>◎</span>Jornada</button>
-        <button className="bottom-nav__item"><span>↗</span>Progresso</button>
-        <button className="bottom-nav__item"><span>⚙</span>Ajustes</button>
-      </nav>
+      <BottomNav active={tab} onChange={setTab} />
     </main>
   );
 }
