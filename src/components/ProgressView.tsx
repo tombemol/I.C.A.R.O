@@ -21,17 +21,6 @@ export function ProgressView() {
     void hydrate(today);
   }, [hydrate, today]);
 
-  if (status === 'loading' || !progress) {
-    return (
-      <section className="view-section">
-        <div className="page-intro">
-          <p className="eyebrow">Ficha de progresso</p>
-          <h1>Carregando sua evolução.</h1>
-        </div>
-      </section>
-    );
-  }
-
   if (status === 'error') {
     return (
       <section className="view-section">
@@ -39,6 +28,17 @@ export function ProgressView() {
           <p className="eyebrow">Ficha de progresso</p>
           <h1>Não consegui abrir seu progresso.</h1>
           <p>{error}</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (status === 'loading' || !progress) {
+    return (
+      <section className="view-section">
+        <div className="page-intro">
+          <p className="eyebrow">Ficha de progresso</p>
+          <h1>Carregando sua evolução.</h1>
         </div>
       </section>
     );
