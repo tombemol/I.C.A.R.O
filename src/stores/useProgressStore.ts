@@ -22,7 +22,7 @@ type ProgressState = {
   status: ProgressStatus;
   error: string | null;
   completingMissionId: string | null;
-  hydrate: (missionDate: string) => Promise<void>;
+  hydrate: (missionDate: string, force?: boolean) => Promise<void>;
   completeMission: (mission: DailyMission) => Promise<boolean>;
 };
 
@@ -35,9 +35,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   error: null,
   completingMissionId: null,
 
-  hydrate: async (missionDate) => {
+  hydrate: async (missionDate, force = false) => {
     if (get().status === 'loading') return;
-    if (get().status === 'ready' && get().missionDate === missionDate) return;
+    if (!force && get().status === 'ready' && get().missionDate === missionDate) return;
 
     set({ status: 'loading', error: null });
 

@@ -15,5 +15,6 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-sql = { version = "2", features = ["sqlite"] }
+tauri-plugin-health = { git = "https://github.com/sosweetham/tauri-plugin-health", rev = "1ec427073a390b48355160978b44bb9aa3060b8a", default-features = false, features = ["steps", "distance", "workouts"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
