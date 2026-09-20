@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { missionValidationRule } from '../lib/lifeEventRules';
 import { missionCategoryLabels, type DailyMission, type MissionCategory } from '../types/mission';
 import { MissionCompletion } from './game/MissionCompletion';
 import { MissionReward } from './game/MissionReward';
@@ -28,6 +29,7 @@ export function MissionRow({
   onComplete,
 }: MissionRowProps) {
   const reduceMotion = useReducedMotion();
+  const automaticRule = missionValidationRule(mission);
 
   return (
     <motion.article
@@ -71,6 +73,12 @@ export function MissionRow({
           </div>
 
           <p className="mission-rationale">{mission.rationale}</p>
+
+          {automaticRule && (
+            <p className="mission-auto-validation">
+              Compatível com validação automática por {automaticRule.label}
+            </p>
+          )}
 
           <button
             className="mission-complete-button"

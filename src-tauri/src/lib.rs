@@ -192,6 +192,7 @@ fn app_version() -> &'static str {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_health::init())
         .plugin(
             tauri_plugin_sql::Builder::default()
                 .add_migrations("sqlite:icaro.db", migrations())

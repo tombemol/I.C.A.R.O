@@ -30,7 +30,7 @@ export function LifeProgressPanel() {
       </div>
 
       <p className="life-progress__intro">
-        Missões agora viram eventos idempotentes antes de alimentar atributos. Na 0.4.0, Health Connect entra pela mesma porta.
+        Missões e atividade do Health Connect viram eventos idempotentes antes de alimentar a progressão. A fonte muda; as regras continuam auditáveis.
       </p>
 
       {status === 'loading' && <p className="inline-status">Sincronizando eventos locais…</p>}
@@ -72,13 +72,15 @@ export function LifeProgressPanel() {
             </div>
 
             {recentEvents.length === 0 ? (
-              <p className="event-log__empty">Conclua uma missão para registrar o primeiro evento.</p>
+              <p className="event-log__empty">Conclua uma missão ou sincronize atividade para registrar o primeiro evento.</p>
             ) : (
               <div className="event-log__list">
                 {recentEvents.slice(0, 5).map((event) => {
                   const effect = event.attribute
                     ? '+' + event.attributePoints + ' ' + attributeLabels[event.attribute]
-                    : 'Sem efeito de atributo';
+                    : event.quantity !== null
+                      ? String(event.quantity) + (event.unit ? ' ' + event.unit : '')
+                      : 'Evidência registrada';
 
                   return (
                     <div className="event-log__item" key={event.id}>

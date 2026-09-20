@@ -5,6 +5,7 @@ import { usePlayerStore } from '../stores/usePlayerStore';
 import { useProgressStore } from '../stores/useProgressStore';
 import type { DailyMission } from '../types/mission';
 import { difficultyLabels } from '../types/player';
+import { HealthConnectPanel } from './HealthConnectPanel';
 import { LevelUpOverlay } from './game/LevelUpOverlay';
 import { PlayerHud } from './game/PlayerHud';
 import { MissionRow } from './MissionRow';
@@ -60,9 +61,7 @@ export function TodayView() {
     const nextLevel = useProgressStore.getState().progress?.level ?? previousLevel;
     setRecentCompletionId(mission.id);
 
-    if (nextLevel > previousLevel) {
-      setLevelUp(nextLevel);
-    }
+    if (nextLevel > previousLevel) setLevelUp(nextLevel);
   };
 
   return (
@@ -82,6 +81,8 @@ export function TodayView() {
           <span>Seu progresso precisa ser real, não espetacular.</span>
         </div>
       </section>
+
+      <HealthConnectPanel missions={missions} />
 
       <section className="section-block" aria-labelledby="missions-title">
         <div className="section-heading">
@@ -105,7 +106,7 @@ export function TodayView() {
               type="button"
               onClick={() => {
                 if (profile) void hydrateForProfile(profile);
-                void hydrateProgress(today);
+                void hydrateProgress(today, true);
               }}
             >
               Tentar de novo
@@ -132,7 +133,7 @@ export function TodayView() {
 
       <section className="principle-strip" aria-label="Regra de progressão">
         <span>Regra do sistema</span>
-        <strong>Uma missão, uma recompensa. XP não duplica ao reabrir ou tocar duas vezes.</strong>
+        <strong>Uma missão, uma recompensa. Manual ou automática, a validação continua idempotente.</strong>
       </section>
 
       <LevelUpOverlay level={levelUp} onDismiss={() => setLevelUp(null)} />
