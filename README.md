@@ -68,7 +68,7 @@ flowchart TD
   MISSIONS --> MREPO[Mission Storage]
   PROGRESS --> GREPO[Progress Storage]
 
-  PREPO --> SQL[@tauri-apps/plugin-sql]
+  PREPO --> SQL["Tauri SQL Plugin"]
   MREPO --> SQL
   GREPO --> SQL
 
