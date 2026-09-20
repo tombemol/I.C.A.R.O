@@ -1,6 +1,6 @@
 import { create } from 'zustand';
+import { completeMissionThroughEngine } from '../lib/missionCompletionService';
 import {
-  completeMissionAndAward,
   loadCompletedMissionIds,
   loadPlayerProgress,
   loadProgressStats,
@@ -71,7 +71,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ completingMissionId: mission.id, error: null });
 
     try {
-      const { progress, inserted } = await completeMissionAndAward(mission);
+      const { progress, inserted } = await completeMissionThroughEngine(mission);
       let completionStats = get().completionStats;
 
       if (inserted) {

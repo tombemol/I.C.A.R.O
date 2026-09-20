@@ -106,6 +106,81 @@ fn migrations() -> Vec<Migration> {
             "#,
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 4,
+            description: "create_life_event_engine",
+            sql: r#"
+                CREATE TABLE IF NOT EXISTS player_attribute (
+                    attribute TEXT PRIMARY KEY NOT NULL,
+                    points INTEGER NOT NULL DEFAULT 0,
+                    updated_at TEXT NOT NULL
+                );
+
+                INSERT OR IGNORE INTO player_attribute (attribute, points, updated_at) VALUES
+                    ('CONDICIONAMENTO', 0, datetime('now')),
+                    ('FORCA', 0, datetime('now')),
+                    ('MOBILIDADE', 0, datetime('now')),
+                    ('CONSTANCIA', 0, datetime('now'));
+
+                CREATE TABLE IF NOT EXISTS life_event (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    event_date TEXT NOT NULL,
+                    event_type TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    attribute TEXT,
+                    attribute_points INTEGER NOT NULL DEFAULT 0,
+                    quantity REAL,
+                    unit TEXT,
+                    reference_id TEXT,
+                    dedupe_key TEXT NOT NULL UNIQUE,
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    created_at TEXT NOT NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_life_event_date
+                ON life_event(event_date);
+
+                CREATE INDEX IF NOT EXISTS idx_life_event_type
+                ON life_event(event_type);
+
+                CREATE TRIGGER IF NOT EXISTS apply_life_event_attribute
+                AFTER INSERT ON life_event
+                WHEN NEW.attribute IS NOT NULL AND NEW.attribute_points > 0
+                BEGIN
+                    UPDATE player_attribute
+                    SET
+                        points = points + NEW.attribute_points,
+                        updated_at = NEW.created_at
+                    WHERE attribute = NEW.attribute;
+                END;
+
+                INSERT OR IGNORE INTO life_event (
+                    id, event_date, event_type, source, attribute, attribute_points, quantity,
+                    unit, reference_id, dedupe_key, metadata_json, created_at
+                )
+                SELECT
+                    'mission:' || mc.mission_id || ':completed',
+                    mc.mission_date,
+                    'MISSION_COMPLETED',
+                    'MANUAL',
+                    CASE dm.category
+                        WHEN 'MOVIMENTO' THEN 'CONDICIONAMENTO'
+                        WHEN 'FORCA' THEN 'FORCA'
+                        WHEN 'MOBILIDADE' THEN 'MOBILIDADE'
+                        ELSE 'CONSTANCIA'
+                    END,
+                    MAX(1, CAST(ROUND(dm.xp / 10.0) AS INTEGER)),
+                    dm.target,
+                    dm.unit,
+                    mc.mission_id,
+                    'mission:' || mc.mission_id || ':completed',
+                    '{}',
+                    mc.completed_at
+                FROM mission_completion mc
+                INNER JOIN daily_mission dm ON dm.id = mc.mission_id;
+            "#,
+            kind: MigrationKind::Up,
+        },
     ]
 }
 
