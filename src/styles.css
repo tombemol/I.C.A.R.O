@@ -810,3 +810,63 @@ button:disabled {
     transition-duration: .01ms !important;
   }
 }
+
+
+.mission-prescription {
+  display: grid;
+  grid-template-columns: .7fr 1.3fr;
+  gap: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.mission-prescription > div {
+  display: grid;
+  gap: 5px;
+}
+
+.mission-prescription span {
+  color: var(--muted);
+  font-size: .67rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.mission-prescription strong {
+  color: var(--soft);
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+.inline-status {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: .84rem;
+}
+
+.inline-error {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.inline-error span {
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.inline-error .button {
+  margin-top: 8px;
+}
+
+@media (max-width: 520px) {
+  .mission-prescription {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

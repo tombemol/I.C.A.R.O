@@ -96,7 +96,7 @@ export function ProfileForm({ initialProfile, onComplete, submitLabel = 'Criar m
 
       <fieldset className="choice-fieldset">
         <legend>Objetivo principal</legend>
-        <p>Isso vai orientar as missões quando o gerador entrar na 0.2.0.</p>
+        <p>O gerador diário usa este objetivo para escolher o tipo de missão que merece mais peso.</p>
         <div className="choice-list">
           {objectives.map((objective) => (
             <label className="choice-row" key={objective}>
@@ -110,7 +110,7 @@ export function ProfileForm({ initialProfile, onComplete, submitLabel = 'Criar m
 
       <fieldset className="choice-fieldset">
         <legend>Dificuldade</legend>
-        <p>A dificuldade controla volume e progressão, não uma competição para ver quem se destrói primeiro.</p>
+        <p>A dificuldade ajusta volume e recompensa. Não serve para transformar terça-feira em seleção natural.</p>
         <div className="difficulty-grid">
           {difficulties.map((difficulty) => (
             <label className="difficulty-choice" key={difficulty}>

@@ -2,6 +2,23 @@
 
 Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 
+## [0.2.0] - 2026-09-20
+
+### Adicionado
+- Gerador determinístico de três missões diárias.
+- Missões adaptadas ao objetivo e à dificuldade da ficha.
+- Multiplicadores de meta e XP por dificuldade.
+- Persistência das missões do dia em SQLite.
+- Migration `daily_mission` com índice por data.
+- Fallback de missões para localStorage no preview web.
+- Tratamento visual para carregamento e falha do gerador.
+- GitHub Actions para validar TypeScript e build Vite em cada push na `main`.
+
+### Alterado
+- Tela Hoje não depende mais de missões hardcoded.
+- A ficha agora explica que objetivo e dificuldade alimentam o gerador diário.
+- README atualizado para a 0.2.0.
+
 ## [0.1.0] - 2026-09-20
 
 ### Adicionado

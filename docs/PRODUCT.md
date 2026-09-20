@@ -9,19 +9,21 @@ Transformar evolução física cotidiana em uma jornada de RPG: ficha, dificulda
 ## Ciclo principal
 1. Criar ficha.
 2. Escolher dificuldade.
-3. Receber missões diárias.
+3. Gerar missões diárias a partir da ficha.
 4. Registrar ou validar atividade.
 5. Receber XP.
 6. Subir de nível e manter sequência.
 7. Aplicar regras de progressão coerentes com a dificuldade.
 8. Salvar progresso localmente.
 
-## Estado da 0.1.0
+## Estado da 0.2.0
 - A ficha existe e é persistida localmente.
-- Em Tauri, o armazenamento principal é SQLite.
-- No preview web, localStorage mantém o fluxo testável sem runtime nativo.
-- O catálogo inicial de exercícios já está navegável.
-- A próxima fase conecta missões ao perfil e ao catálogo.
+- Missões do dia são geradas de forma determinística.
+- Objetivo influencia seleção de categoria.
+- Dificuldade altera volume e recompensa.
+- Missões são persistidas para não mudar durante o mesmo dia.
+- O catálogo inicial segue navegável.
+- A próxima fase torna conclusão, XP, nível e sequência persistentes.
 
 ## Princípios de produto
 - Offline-first.
@@ -30,6 +32,7 @@ Transformar evolução física cotidiana em uma jornada de RPG: ficha, dificulda
 - Missões pequenas o bastante para caber em um dia real.
 - Sem dependência obrigatória de nuvem.
 - Código e regras abertas para auditoria e contribuição.
+- O sistema pode aumentar desafio, mas não premia comportamento irresponsável.
 
 ## Direção visual
-O projeto usa https://impeccable.style/ como referência de qualidade de interface: hierarquia clara, poucos elementos competindo pela atenção, ações específicas e ausência de ornamentação sem função. O sistema local está registrado em `DESIGN.md`.
+O projeto usa https://impeccable.style/ como referência de qualidade de interface. O sistema visual está documentado em `DESIGN.md`.
