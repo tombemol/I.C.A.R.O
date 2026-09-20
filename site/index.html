@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0a0a0b" />
+  <meta name="description" content="I.C.A.R.O. é um RPG open source de evolução pessoal em que a vida real é o input." />
+  <meta property="og:title" content="I.C.A.R.O. — vida real como input" />
+  <meta property="og:description" content="Atividade real vira evidência, eventos, quests, atributos e progressão." />
+  <meta property="og:type" content="website" />
+  <title>I.C.A.R.O. — Vida real como input</title>
+  <link rel="icon" href="./assets/icaro-wings.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="nav-shell">
+    <nav class="nav wrap" aria-label="Navegação principal">
+      <a class="brand" href="#top" aria-label="I.C.A.R.O.">
+        <img src="./assets/icaro-wings.svg" alt="" />
+        <span>I.C.A.R.O.</span>
+      </a>
+      <div class="nav-links">
+        <a href="#conceito">Conceito</a>
+        <a href="#health">Health Connect</a>
+        <a href="#roadmap">Roadmap</a>
+        <a class="nav-github" href="https://github.com/tombemol/I.C.A.R.O">GitHub ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <div class="kicker"><span></span> versão 0.4.0 · Android</div>
+        <h1>Sua vida é<br><em>o input.</em></h1>
+        <p>
+          Um RPG open source de evolução pessoal que transforma atividade real em evidência,
+          eventos, quests, atributos e progressão.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="https://github.com/tombemol/I.C.A.R.O">Ver no GitHub</a>
+          <a class="button ghost" href="#conceito">Entender o projeto</a>
+        </div>
+        <div class="hero-meta" aria-label="Características">
+          <span>Offline-first</span>
+          <span>Health Connect</span>
+          <span>SQLite local</span>
+          <span>Open source</span>
+        </div>
+      </div>
+
+      <div class="hero-mark" aria-label="Símbolo do I.C.A.R.O.">
+        <div class="sun-glow"></div>
+        <img src="./assets/icaro-wings.svg" alt="Duas asas douradas envolvendo o I de Ícaro" />
+        <div class="mark-caption">
+          <span>ÍCARO / 00.4</span>
+          <span>VIDA → EVENTO → EVOLUÇÃO</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="manifesto" id="conceito">
+      <div class="wrap manifesto-grid">
+        <div class="section-index">01 / CONCEITO</div>
+        <div>
+          <p class="eyebrow">Não é um checklist fantasiado de RPG.</p>
+          <h2>O personagem deve refletir o que aconteceu fora da tela.</h2>
+          <p class="lead">
+            O I.C.A.R.O. trata atividade como fato antes de tratá-la como recompensa.
+            A integração coleta evidência; o motor aplica regras; só então a progressão muda.
+          </p>
+
+          <div class="pipeline" aria-label="Pipeline de progressão">
+            <div><small>01</small><strong>Vida real</strong><span>movimento e treino</span></div>
+            <b>→</b>
+            <div><small>02</small><strong>Evidência</strong><span>Health Connect</span></div>
+            <b>→</b>
+            <div><small>03</small><strong>Life Event</strong><span>fato normalizado</span></div>
+            <b>→</b>
+            <div><small>04</small><strong>Regra</strong><span>explícita e auditável</span></div>
+            <b>→</b>
+            <div><small>05</small><strong>Evolução</strong><span>XP + atributos</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features wrap">
+      <article class="feature featured">
+        <span class="feature-number">01</span>
+        <h3>Vida real como input</h3>
+        <p>O checklist continua existindo, mas é fallback. A visão é reduzir entrada manual progressivamente.</p>
+      </article>
+      <article class="feature">
+        <span class="feature-number">02</span>
+        <h3>Progressão explicável</h3>
+        <p>Eventos não concedem pontos por mágica. Regras determinam o que conta e por quê.</p>
+      </article>
+      <article class="feature">
+        <span class="feature-number">03</span>
+        <h3>Offline-first</h3>
+        <p>Ficha, quests, atributos e histórico continuam locais. Nuvem não é pedágio para existir.</p>
+      </article>
+      <article class="feature">
+        <span class="feature-number">04</span>
+        <h3>Idempotência</h3>
+        <p>Sincronizar novamente não duplica atividade, não repete quest e não fabrica XP.</p>
+      </article>
+    </section>
+
+    <section class="health-section" id="health">
+      <div class="wrap health-grid">
+        <div>
+          <div class="section-index">02 / HEALTH CONNECT</div>
+          <p class="eyebrow">A ponte entre o mundo físico e o motor.</p>
+          <h2>O Android fornece evidência. O jogo decide o efeito.</h2>
+          <p class="lead">
+            A 0.4.0 lê apenas passos, distância e sessões de exercício.
+            O acesso é somente leitura, pode ser parcial e pode ser revogado.
+          </p>
+
+          <ul class="health-list">
+            <li><span>PASSOS</span><strong>Snapshot diário</strong></li>
+            <li><span>DISTÂNCIA</span><strong>Quests de caminhada</strong></li>
+            <li><span>TREINOS</span><strong>Duração + tipo da sessão</strong></li>
+          </ul>
+        </div>
+
+        <div class="phone" aria-label="Exemplo visual do painel de atividade">
+          <div class="phone-top"><span>9:41</span><span>I.C.A.R.O.</span><span>●</span></div>
+          <div class="phone-player">
+            <small>JOGADOR</small>
+            <h3>Hoje</h3>
+            <span class="rank">EXPLORADOR · NV. 12</span>
+          </div>
+          <div class="phone-xp"><i style="width:72%"></i></div>
+          <div class="phone-data-title">
+            <span>ATIVIDADE REAL</span><b>HEALTH CONNECT</b>
+          </div>
+          <div class="phone-data">
+            <div><strong>8.426</strong><span>passos</span></div>
+            <div><strong>5,8</strong><span>km</span></div>
+            <div><strong>42</strong><span>min treino</span></div>
+          </div>
+          <div class="quest done">
+            <span>✓ VALIDADA AUTOMATICAMENTE</span>
+            <strong>Caminhar 5 km</strong>
+            <small>+120 XP · +12 Condicionamento</small>
+          </div>
+          <div class="quest">
+            <span>QUEST ATIVA</span>
+            <strong>Mobilidade · 15 min</strong>
+            <small>Health Connect procurando evidência</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="system wrap">
+      <div class="section-index">03 / SISTEMA</div>
+      <div class="system-head">
+        <div>
+          <p class="eyebrow">Duas camadas de evolução.</p>
+          <h2>Quanto você evoluiu.<br>E como.</h2>
+        </div>
+        <p>XP e nível resumem a jornada. Atributos descrevem sua direção.</p>
+      </div>
+
+      <div class="attributes">
+        <div><span>COND</span><strong>Condicionamento</strong><i style="--p:78%"></i></div>
+        <div><span>FOR</span><strong>Força</strong><i style="--p:55%"></i></div>
+        <div><span>MOB</span><strong>Mobilidade</strong><i style="--p:39%"></i></div>
+        <div><span>CON</span><strong>Constância</strong><i style="--p:88%"></i></div>
+      </div>
+    </section>
+
+    <section class="architecture">
+      <div class="wrap">
+        <div class="section-index">04 / ARQUITETURA</div>
+        <div class="arch-grid">
+          <div class="arch-copy">
+            <p class="eyebrow">Integração desacoplada.</p>
+            <h2>Health Connect é uma fonte, não o cérebro.</h2>
+            <p class="lead">
+              O motor não depende de uma API específica do Android. Fontes diferentes podem produzir
+              o mesmo contrato de Life Event sem contaminar a lógica de progressão.
+            </p>
+          </div>
+          <div class="arch-diagram">
+            <div class="node source">Health Connect</div>
+            <div class="line">↓</div>
+            <div class="node">Snapshot</div>
+            <div class="line">↓</div>
+            <div class="node accent">Life Event Engine</div>
+            <div class="split">
+              <span>↙</span><span>↓</span><span>↘</span>
+            </div>
+            <div class="node-row">
+              <div class="node mini">Quest</div>
+              <div class="node mini">Atributos</div>
+              <div class="node mini">Histórico</div>
+            </div>
+            <div class="line">↓</div>
+            <div class="node database">SQLite local</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="roadmap wrap" id="roadmap">
+      <div class="section-index">05 / ROADMAP</div>
+      <div class="roadmap-head">
+        <p class="eyebrow">Construção incremental.</p>
+        <h2>Do checklist para um character sheet automático.</h2>
+      </div>
+      <div class="timeline">
+        <div class="milestone done"><span>0.1</span><strong>Ficha + SQLite</strong><small>fundação local</small></div>
+        <div class="milestone done"><span>0.2</span><strong>Missões diárias</strong><small>objetivos adaptativos</small></div>
+        <div class="milestone done"><span>0.3</span><strong>Progressão</strong><small>XP, streak, atributos</small></div>
+        <div class="milestone current"><span>0.4</span><strong>Vida real</strong><small>Health Connect</small></div>
+        <div class="milestone"><span>0.5</span><strong>Profundidade</strong><small>marcos + visualizações</small></div>
+        <div class="milestone"><span>0.6</span><strong>Distribuição</strong><small>notificações + release</small></div>
+      </div>
+    </section>
+
+    <section class="run-section">
+      <div class="wrap run-grid">
+        <div>
+          <div class="section-index">06 / CONTRIBUA</div>
+          <p class="eyebrow">Código aberto.</p>
+          <h2>Rode. Quebre. Melhore.</h2>
+          <p class="lead">React, Tauri, Rust, SQLite e Android Health Connect. Sem cerimônia corporativa obrigatória.</p>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><i></i><i></i><i></i><span>terminal</span></div>
+          <pre><code><span>$</span> git clone https://github.com/tombemol/I.C.A.R.O.git
+<span>$</span> cd I.C.A.R.O
+<span>$</span> npm install
+<span>$</span> npm run android:dev</code></pre>
+          <a href="https://github.com/tombemol/I.C.A.R.O/blob/main/docs/ANDROID_TESTING.md">Abrir guia Android ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta wrap">
+      <img src="./assets/icaro-wings.svg" alt="" />
+      <p class="eyebrow">I.C.A.R.O. / 0.4.0</p>
+      <h2>Suba.<br><em>Mas deixe os dados provarem.</em></h2>
+      <div class="hero-actions center">
+        <a class="button primary" href="https://github.com/tombemol/I.C.A.R.O">Explorar o repositório</a>
+        <a class="button ghost" href="https://github.com/tombemol/I.C.A.R.O/blob/main/README.md">Ler documentação</a>
+      </div>
+      <p class="disclaimer">I.C.A.R.O. não é um dispositivo médico e não substitui orientação profissional de saúde.</p>
+    </section>
+  </main>
+
+  <footer class="footer wrap">
+    <div class="brand small"><img src="./assets/icaro-wings.svg" alt="" /><span>I.C.A.R.O.</span></div>
+    <p>Índice de Condicionamento, Atividade, Rotina e Objetivos.</p>
+    <span id="year"></span>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

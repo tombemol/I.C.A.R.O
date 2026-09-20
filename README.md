@@ -1,139 +1,159 @@
+<div align="center">
+  <img src="./brand/icaro-wings.svg" width="190" alt="Símbolo do I.C.A.R.O.: duas asas douradas ao redor de um I central" />
+
 # I.C.A.R.O.
 
-> **Índice de Condicionamento, Atividade, Rotina e Objetivos**
+### Índice de Condicionamento, Atividade, Rotina e Objetivos
 
-RPG open source de evolução pessoal que usa a vida real como input. Atividade registrada no Android vira evidência, passa por regras explícitas e só então pode virar missão concluída, atributo, XP, nível e histórico.
+**Um RPG de evolução pessoal em que a vida real é o input.**
 
-**Versão atual: `0.4.0`**
+Atividade registrada no Android vira evidência, passa por regras explícitas e só então pode virar missão concluída, atributo, XP, nível e histórico.
 
-## 0.4.0 — Health Connect
+[![Version](https://img.shields.io/badge/version-0.4.0-F0B74A?style=flat-square&labelColor=111113)](./CHANGELOG.md)
+[![CI](https://img.shields.io/github/actions/workflow/status/tombemol/I.C.A.R.O/ci.yml?branch=main&style=flat-square&label=build&labelColor=111113)](https://github.com/tombemol/I.C.A.R.O/actions/workflows/ci.yml)
+[![Android](https://img.shields.io/badge/Android-Health%20Connect-F0B74A?style=flat-square&labelColor=111113)](./docs/ANDROID_TESTING.md)
+[![Tauri](https://img.shields.io/badge/Tauri-2-F0B74A?style=flat-square&labelColor=111113)](https://tauri.app/)
+[![Open Source](https://img.shields.io/badge/open_source-sim-F0B74A?style=flat-square&labelColor=111113)](#)
 
-A 0.4.0 conecta o Life Event Engine ao Android.
+**[Site do projeto](https://tombemol.github.io/I.C.A.R.O/)** · **[Como rodar](#rodar-localmente)** · **[Roadmap](#roadmap)** · **[Documentação](#documentação)**
 
-O aplicativo agora pode:
+</div>
 
-- detectar disponibilidade do Health Connect;
-- pedir somente leitura de passos, distância e sessões de exercício;
-- respeitar acesso parcial ou revogado;
-- montar um snapshot diário local;
-- registrar passos, distância e treinos como Life Events idempotentes;
-- validar automaticamente missões compatíveis;
-- manter conclusão manual para tudo que não puder ser verificado;
-- mostrar passos, distância e minutos de treino na tela Hoje;
-- abrir as configurações do Health Connect para o usuário gerenciar permissões.
+---
 
-Health Connect **não concede XP diretamente**. Ele fornece evidência. A recompensa continua passando pelas mesmas regras e pela mesma proteção contra duplicidade usadas na conclusão manual.
+## A ideia
 
-## Fluxo
+A maioria dos apps de produtividade gamificada funciona assim:
 
-```mermaid
-flowchart LR
-  REAL[Vida real] --> HC[Health Connect]
-  HC --> SNAP[Snapshot diário]
-  SNAP --> EVENT[Life Event]
-  EVENT --> RULE[Regra explícita]
-  RULE -->|meta atingida| QUEST[Missão concluída]
-  QUEST --> XP[XP + nível + streak]
-  QUEST --> ATTR[Atributos]
-
-  MANUAL[Fallback manual] --> QUEST
+```text
+você marca uma tarefa → o app acredita → você recebe pontos
 ```
 
-## Dados lidos
+O I.C.A.R.O. segue outra direção:
 
-A 0.4.0 solicita apenas:
+```text
+vida real → evidência → Life Event → regra → progressão
+```
 
-- passos;
-- distância;
-- sessões de exercício.
+O objetivo é reduzir a distância entre **o que aconteceu de verdade** e **o que o personagem representa**.
 
-A integração é somente leitura e não exige nuvem.
+> **XP mostra quanto você evoluiu. Atributos mostram como você evoluiu.**
 
-### Missões verificáveis hoje
+---
 
-| Missão / padrão | Evidência |
+## 0.4.0 · Health Connect
+
+A versão atual é a primeira em que o Android entra como fonte real de dados.
+
+<table>
+<tr>
+<td width="33%"><strong>Passos</strong><br><sub>Leitura diária via Health Connect.</sub></td>
+<td width="33%"><strong>Distância</strong><br><sub>Usada como evidência para quests compatíveis.</sub></td>
+<td width="33%"><strong>Treinos</strong><br><sub>Sessões, duração e tipo de atividade.</sub></td>
+</tr>
+</table>
+
+O Health Connect é **read-only** no I.C.A.R.O. e não concede XP diretamente. Ele fornece evidência. A recompensa continua passando pelas mesmas regras, pela persistência local e pela proteção contra duplicidade.
+
+### O que já pode ser validado automaticamente
+
+| Quest | Evidência real |
 | --- | --- |
 | Distância de caminhada | distância diária |
-| Minutos ativos | duração somada de treinos |
+| Minutos ativos | duração acumulada de sessões |
 | Caminhada leve | minutos em sessão de caminhada |
 | Sessão mínima | maior sessão contínua |
 | Mobilidade | yoga/pilates registrados |
 
-Missões de repetições e atividades sem evidência confiável continuam manuais. O software poderia fingir que sabe quantos agachamentos você fez. Felizmente, ainda temos algum amor pela realidade.
+Repetições e atividades sem evidência confiável continuam manuais. O software poderia fingir que viu seu agachamento. Preferimos a inconveniência da realidade.
 
-## Idempotência
+---
 
-- passos e distância usam uma chave por dia e são atualizados, não duplicados;
-- sessões de exercício usam chave derivada da sessão;
-- uma missão continua tendo apenas uma conclusão;
-- sincronizar várias vezes não fabrica XP;
-- atividade bruta entra com zero pontos de atributo;
-- pontos são concedidos apenas quando uma regra de progressão é satisfeita.
+## Como funciona
+
+```mermaid
+flowchart LR
+  REAL["Vida real"] --> HC["Health Connect"]
+  HC --> SNAP["Snapshot diário"]
+  SNAP --> EVENT["Life Event"]
+  EVENT --> RULE["Regra explícita"]
+  RULE -->|meta atingida| QUEST["Quest concluída"]
+  QUEST --> XP["XP + nível + streak"]
+  QUEST --> ATTR["Atributos"]
+
+  MANUAL["Fallback manual"] --> QUEST
+```
+
+### Atributos
+
+O motor mantém quatro eixos independentes da barra global de XP:
+
+| Atributo | O que representa |
+| --- | --- |
+| **Condicionamento** | movimento, distância e esforço cardiorrespiratório |
+| **Força** | sessões e quests de força |
+| **Mobilidade** | mobilidade, alongamento e atividades relacionadas |
+| **Constância** | recorrência e disciplina ao longo do tempo |
+
+Eles são **mecânicas de jogo derivadas de regras explicáveis**, não métricas médicas.
+
+---
 
 ## Arquitetura
 
 ```mermaid
 flowchart TD
-  UI[React + TypeScript] --> HSTORE[Health Connect Store]
-  HSTORE --> HAPI[Health Plugin]
-  HAPI --> HC[Android Health Connect]
+  UI["React + TypeScript"] --> HSTORE["Health Connect Store"]
+  HSTORE --> HAPI["Health Plugin"]
+  HAPI --> HC["Android Health Connect"]
 
-  HSTORE --> SYNC[Health Mission Sync]
-  SYNC --> EVENTS[Life Event Engine]
-  SYNC --> RULES[Validation Rules]
-  RULES --> COMPLETION[Mission Completion]
+  HSTORE --> SYNC["Health Mission Sync"]
+  SYNC --> EVENTS["Life Event Engine"]
+  SYNC --> RULES["Validation Rules"]
+  RULES --> COMPLETION["Mission Completion"]
 
-  COMPLETION --> DB[(SQLite)]
-  DB --> PROGRESS[XP / nível / streak]
-  DB --> ATTR[Atributos]
+  COMPLETION --> DB[("SQLite")]
+  DB --> PROGRESS["XP / nível / streak"]
+  DB --> ATTR["Atributos"]
 
-  MANUAL[Conclusão manual] --> COMPLETION
+  MANUAL["Conclusão manual"] --> COMPLETION
 ```
 
-O plugin de saúde é usado com commit fixado e apenas os recursos `steps`, `distance` e `workouts` habilitados.
+### Stack
 
-## Stack
+| Camada | Tecnologia |
+| --- | --- |
+| App | React 19 + TypeScript + Vite |
+| Native shell | Tauri 2 + Rust |
+| Estado | Zustand |
+| Persistência | SQLite |
+| Motion | Framer Motion |
+| Dados de atividade | Android Health Connect |
+| CI | GitHub Actions |
+| Site | GitHub Pages |
 
-- Tauri 2
-- React 19 + TypeScript
-- Vite
-- Framer Motion
-- Zustand
-- React Hook Form + Zod
-- SQLite + `@tauri-apps/plugin-sql`
-- Rust
-- Health Connect
-- GitHub Actions
+---
 
-## Direção visual
+## Princípios de produto
 
-A referência oficial continua sendo **[Impeccable](https://impeccable.style/)**.
+**Offline-first.** A nuvem não é requisito para existir.
 
-A integração de saúde aparece como uma camada discreta de contexto, não como mais um dashboard cheio de cartões. O sistema visual está em [`DESIGN.md`](./DESIGN.md).
+**Vida real como input.** O checklist é fallback, não a visão de produto.
 
-## Rodar
+**Explicável.** Uma recompensa precisa ter uma regra que possa ser entendida.
 
-Frontend:
+**Idempotente.** Sincronizar duas vezes não cria duas vidas paralelas com XP grátis.
 
-```bash
-npm install
-npm run dev
-```
+**Saúde antes de gamificação.** O sistema não deve premiar comportamento irresponsável.
 
-Android:
+**Automação sem perda de controle.** Permissões podem ser parciais, negadas ou revogadas.
 
-```bash
-npm install
-npm run android:init
-npm run android:dev
-```
-
-Guia de Android e Health Connect: [`docs/ANDROID_TESTING.md`](./docs/ANDROID_TESTING.md).
+---
 
 ## Roadmap
 
 | Versão | Foco | Estado |
-| --- | --- | --- |
+| --- | --- | :---: |
 | `0.0.1` | Scaffold Android/Tauri | ✅ |
 | `0.1.0` | Ficha, SQLite e exercícios | ✅ |
 | `0.2.0` | Missões diárias | ✅ |
@@ -141,22 +161,67 @@ Guia de Android e Health Connect: [`docs/ANDROID_TESTING.md`](./docs/ANDROID_TES
 | `0.3.1` | Game Feel | ✅ |
 | `0.3.2` | Life Event Engine e atributos | ✅ |
 | `0.4.0` | Health Connect como fonte real | ✅ |
-| `0.4.x` | Mais regras e sincronização refinada | Próxima |
-| `0.5.0` | Progressão profunda, marcos e visualizações | Planejada |
-| `0.6.0` | Notificações e distribuição | Planejada |
+| `0.4.x` | Mais regras e sincronização refinada | 🔨 |
+| `0.5.0` | Progressão profunda, marcos e visualizações | ◻️ |
+| `0.6.0` | Notificações e distribuição | ◻️ |
+
+---
+
+## Rodar localmente
+
+### Frontend
+
+```bash
+npm install
+npm run dev
+```
+
+### Android
+
+```bash
+npm install
+npm run android:init
+npm run android:dev
+```
+
+Para abrir o projeto Android no Android Studio:
+
+```bash
+npm run android:studio
+```
+
+O guia completo de emulator, SDK, NDK e Health Connect está em [`docs/ANDROID_TESTING.md`](./docs/ANDROID_TESTING.md).
+
+---
 
 ## Persistência
 
-A fonte da verdade local continua em `sqlite:icaro.db`:
+A fonte da verdade local é `sqlite:icaro.db`.
 
-- `player_profile`;
-- `daily_mission`;
-- `player_progress`;
-- `mission_completion`;
-- `player_attribute`;
-- `life_event`.
+```text
+player_profile
+daily_mission
+player_progress
+mission_completion
+player_attribute
+life_event
+```
 
-O preview web continua disponível para UI, mas Health Connect é uma capacidade nativa Android.
+Life Events usam `dedupe_key`, e cada missão só pode gerar uma conclusão. A sincronização pode repetir. A recompensa não.
+
+---
+
+## Identidade visual
+
+O símbolo do I.C.A.R.O. usa **duas asas**, uma referência direta ao mito de Ícaro, envolvendo um **I** central sob um disco solar.
+
+A direção continua sendo:
+
+> **RPG futurista sóbrio + fitness + mitologia, sem neon gratuito e sem interface de cassino.**
+
+A referência de qualidade visual do projeto é [Impeccable](https://impeccable.style/). O sistema completo está em [`DESIGN.md`](./DESIGN.md).
+
+---
 
 ## Documentação
 
@@ -165,7 +230,16 @@ O preview web continua disponível para UI, mas Health Connect é uma capacidade
 - [Release 0.4.0](./docs/RELEASE_0.4.0.md)
 - [Android / Health Connect](./docs/ANDROID_TESTING.md)
 - [Design System](./DESIGN.md)
+- [Changelog](./CHANGELOG.md)
 
-## Licença
+---
 
-A licença será definida antes da primeira release pública estável.
+<div align="center">
+
+### Suba. Mas deixe os dados provarem.
+
+**I.C.A.R.O. · v0.4.0**
+
+<sub>Projeto open source. Não é um dispositivo médico nem substitui orientação profissional de saúde.</sub>
+
+</div>

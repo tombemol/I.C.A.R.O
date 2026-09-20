@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<title id="title">I.C.A.R.O. — asas de Ícaro</title>
+<desc id="desc">Duas asas douradas simétricas envolvendo um I central e um disco solar.</desc>
+<defs>
+  <linearGradient id="gold" x1="40" y1="100" x2="472" y2="420" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#FFD77A"/>
+    <stop offset=".52" stop-color="#F0B74A"/>
+    <stop offset="1" stop-color="#C98322"/>
+  </linearGradient>
+  <g id="wing">
+    <path d="M238 286C207 246 171 207 126 171C101 151 76 136 49 126C76 172 108 210 145 239C178 264 209 279 238 286Z"/>
+    <path d="M235 290C197 270 156 255 111 249C86 246 62 247 37 251C75 278 116 296 157 302C186 306 213 302 235 290Z"/>
+    <path d="M231 295C196 296 158 305 120 324C98 335 79 348 61 364C101 364 141 357 176 344C201 335 219 318 231 295Z"/>
+    <path d="M231 299C205 317 183 338 164 364C153 379 145 394 139 410C168 395 193 377 213 357C226 344 236 329 243 314L231 299Z"/>
+  </g>
+</defs>
+<g fill="url(#gold)">
+  <use href="#wing"/>
+  <use href="#wing" transform="translate(512 0) scale(-1 1)"/>
+</g>
+<circle cx="256" cy="215" r="31" stroke="url(#gold)" stroke-width="10"/>
+<circle cx="256" cy="215" r="7" fill="#F0B74A"/>
+<path d="M256 246V346" stroke="url(#gold)" stroke-width="16" stroke-linecap="round"/>
+<path d="M230 346H282" stroke="url(#gold)" stroke-width="16" stroke-linecap="round"/>
+</svg>
