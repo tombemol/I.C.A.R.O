@@ -1,12 +1,12 @@
 ---
 name: I.C.A.R.O.
-version: 0.3.1
+version: 0.3.2
 reference: https://impeccable.style/
 ---
 
 # Overview
 
-I.C.A.R.O. usa uma interface escura, direta e mobile-first. A linguagem da 0.3.1 é **RPG futurista sóbrio + HUD de personagem + fitness**. A interface deve comunicar progressão em poucos segundos, sem virar painel corporativo, cassino mobile ou coleção de cards gerados automaticamente.
+I.C.A.R.O. usa uma interface escura, direta e mobile-first. A linguagem é **RPG futurista sóbrio + HUD de personagem + fitness**. A 0.3.2 acrescenta a leitura de atributos e eventos de vida sem transformar a interface num painel corporativo fantasiado de videogame.
 
 # Princípios
 
@@ -16,6 +16,8 @@ I.C.A.R.O. usa uma interface escura, direta e mobile-first. A linguagem da 0.3.1
 4. Divisores, tipografia e spacing vêm antes de criar outra caixa.
 5. Eventos importantes usam menos palavras.
 6. Animação responde ao estado persistido. Nunca é fonte da verdade.
+7. Atributos explicam **como** o jogador evolui; XP explica **quanto** ele evoluiu.
+8. Um evento recente deve ser legível como fato, sem jargão técnico da integração que o originou.
 
 # Colors
 
@@ -27,7 +29,7 @@ I.C.A.R.O. usa uma interface escura, direta e mobile-first. A linguagem da 0.3.1
 - Texto secundário: `#96969f`
 - Ação/destaque: `#f0b74a`
 
-O dourado é reservado para ação, XP, rank e estado selecionado. Evitar uma cor diferente por categoria de missão.
+O dourado é reservado para ação, XP, rank e progressão. Evitar uma cor diferente por atributo só porque alguém descobriu que gráficos podem ter arco-íris.
 
 # Typography
 
@@ -35,7 +37,7 @@ O dourado é reservado para ação, XP, rank e estado selecionado. Evitar uma co
 - Títulos têm contraste forte de tamanho e peso.
 - Labels são pequenas, em caixa alta e com tracking leve.
 - Eventos importantes usam mensagens curtas: `MISSÃO CONCLUÍDA`, `NÍVEL AUMENTADO`, `SEQUÊNCIA MANTIDA`.
-- Textos explicativos nunca disputam atenção com XP, nível ou objetivo.
+- Textos explicativos nunca disputam atenção com XP, nível, atributo ou objetivo.
 
 # Layout
 
@@ -90,30 +92,46 @@ A categoria é diferenciada principalmente por ícone e texto. Cor é apoio, nã
 ## Estados
 
 ### Disponível
-
 A missão mostra detalhes completos e `CONCLUIR MISSÃO`.
 
 ### Validando
-
 O botão responde imediatamente e mostra `VALIDANDO...`.
 
 ### Concluída
-
 A missão é condensada, perde contraste e mostra:
-
 - `✓ MISSÃO CONCLUÍDA`
 - `+XP OBTIDO`
+
+# Atributos
+
+A ficha de progresso passa a incluir quatro atributos persistentes:
+
+- Condicionamento
+- Força
+- Mobilidade
+- Constância
+
+A UI deve priorizar comparação rápida entre eles sem fingir precisão biométrica. Pontos são progressão de jogo derivada de regras explicáveis, não diagnóstico de saúde.
+
+# Eventos recentes
+
+O log de Life Events mostra fatos normalizados de forma humana:
+
+- origem resumida;
+- tipo de atividade;
+- quantidade quando relevante;
+- atributo afetado;
+- data.
+
+`dedupe_key`, IDs internos e payloads brutos pertencem à camada técnica, não à tela principal.
 
 # Feedback
 
 ## XP
-
 A barra de XP anima em aproximadamente 400–700 ms. O feedback de missão aparece sem bloquear o fluxo.
 
 ## Level up
-
 Level up pode usar overlay curto com:
-
 - `NÍVEL AUMENTADO`;
 - nível novo;
 - expansão de luz discreta;
@@ -127,21 +145,19 @@ Sem animações longas para recompensas pequenas. Caminhar dois quilômetros con
 A tela Progresso deve parecer uma ficha de personagem e responder “estou evoluindo?” rapidamente.
 
 Prioridades:
-
 - nome;
 - nível + rank;
 - XP do nível;
+- atributos;
 - XP total;
 - sequência atual;
 - missões concluídas;
+- eventos recentes;
 - últimos sete dias.
-
-O histórico semanal usa três marcadores por dia, um por missão diária, antes de introduzir gráficos mais complexos.
 
 # Perfil
 
 Perfil é a ficha editável do jogador:
-
 - nome;
 - nível + rank;
 - objetivo;
@@ -154,7 +170,6 @@ A edição continua simples e funcional.
 # Navegação
 
 Barra inferior com quatro destinos:
-
 - Hoje;
 - Exercícios;
 - Progresso;
@@ -165,7 +180,6 @@ Barra inferior com quatro destinos:
 # Motion
 
 Usar Framer Motion apenas onde melhora leitura do estado:
-
 - XP crescendo;
 - missão concluída;
 - level up;
@@ -183,7 +197,7 @@ Usar Framer Motion apenas onde melhora leitura do estado:
 - Manter a UI funcional em telas de 320px.
 - Não usar neon em tudo.
 - Não usar gradiente decorativo genérico.
-- Não transformar rank em outra economia.
+- Não transformar rank ou atributo em outra economia.
 - Não criar estado persistido para efeitos temporários.
 - Não misturar cinco estilos de botão.
 - Não criar battle pass. Há limites até para software.
