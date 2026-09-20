@@ -1,6 +1,6 @@
 ---
 name: I.C.A.R.O.
-version: 0.1.0
+version: 0.3.0
 reference: https://impeccable.style/
 ---
 
@@ -18,7 +18,7 @@ I.C.A.R.O. usa uma interface escura, direta e mobile-first. A tela deve parecer 
 - Texto secundário: `#96969f`
 - Ação/destaque: `#f0b74a`
 
-O amarelo é reservado para ação, progresso e estado selecionado. Não pintar tudo de amarelo como se a interface tivesse descoberto marca-texto ontem.
+O amarelo é reservado para ação, progresso e estado selecionado.
 
 # Typography
 
@@ -54,6 +54,9 @@ Fundo amarelo, texto escuro, peso alto. Apenas para a próxima ação mais impor
 ## Botão secundário
 Fundo transparente, borda discreta.
 
+## Missão
+Cada missão é uma linha separada por divisor. A ação de conclusão aparece no fim do conteúdo. Depois da conclusão, a linha perde contraste e a ação vira confirmação persistente, evitando ambiguidade sobre XP já concedido.
+
 ## Listas
 Preferir divisores horizontais a um card por item.
 
@@ -68,6 +71,7 @@ Barra inferior compacta com quatro destinos no máximo.
 - Fazer a hierarquia responder “o que importa agora?” em menos de dois segundos.
 - Usar spacing, tipografia e divisores antes de criar mais uma caixa.
 - Preservar contraste e foco visível.
+- Mostrar conclusão e recompensa sem depender apenas de cor.
 - Não usar gradiente decorativo genérico.
 - Não usar estatísticas soltas só para preencher espaço.
 - Não misturar cinco estilos de botão.

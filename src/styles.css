@@ -870,3 +870,46 @@ button:disabled {
     gap: 12px;
   }
 }
+
+
+.mission-complete-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--soft);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mission-complete-button:hover:not(:disabled) {
+  border-color: rgba(240, 183, 74, .6);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.mission-complete-button.is-complete {
+  border-color: transparent;
+  background: rgba(255, 255, 255, .04);
+  color: var(--muted);
+}
+
+.mission-row.is-complete h3,
+.mission-row.is-complete > p,
+.mission-row.is-complete .mission-prescription strong {
+  color: var(--muted);
+}
+
+.progress-explainer {
+  max-width: 620px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+
+.progress-explainer > p:last-child {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}

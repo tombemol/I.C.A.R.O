@@ -1,13 +1,17 @@
 {
   "name": "icaro",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "android:init": "tauri android init",
+    "android:dev": "tauri android dev",
+    "android:studio": "tauri android dev --open",
+    "android:build": "tauri android build"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.8.0",

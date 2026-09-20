@@ -2,6 +2,24 @@
 
 Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 
+## [0.3.0] - 2026-09-20
+
+### Adicionado
+- Persistência de XP, nível, sequência e último dia ativo.
+- Migration `player_progress` e `mission_completion`.
+- Trigger SQLite que concede XP e atualiza sequência apenas na primeira conclusão de cada missão.
+- Conclusão manual de missões na tela Hoje.
+- Estado visual de missão concluída.
+- Resumo de progresso ligado aos dados persistidos.
+- Branch e PR dedicados para a versão.
+- Guia de teste Android no PC com Android Emulator.
+- Scripts `android:init`, `android:dev`, `android:studio` e `android:build`.
+
+### Alterado
+- Valores demonstrativos de nível/XP/streak foram removidos do Player Store.
+- A tela Progresso agora lê dados reais do armazenamento local.
+- Processo de release formalizado em `docs/RELEASE_PROCESS.md`.
+
 ## [0.2.0] - 2026-09-20
 
 ### Adicionado
