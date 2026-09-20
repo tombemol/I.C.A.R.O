@@ -8,23 +8,14 @@ type PlayerState = {
   profile: PlayerProfile | null;
   hydrationStatus: HydrationStatus;
   hydrationError: string | null;
-  level: number;
-  xp: number;
-  xpToNext: number;
-  streak: number;
   hydrate: () => Promise<void>;
   saveProfile: (input: PlayerProfileInput) => Promise<PlayerProfile>;
-  gainXp: (amount: number) => void;
 };
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
   profile: null,
   hydrationStatus: 'idle',
   hydrationError: null,
-  level: 4,
-  xp: 680,
-  xpToNext: 1000,
-  streak: 6,
 
   hydrate: async () => {
     if (get().hydrationStatus === 'loading') return;
@@ -55,17 +46,4 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     set({ profile, hydrationStatus: 'ready', hydrationError: null });
     return profile;
   },
-
-  gainXp: (amount) =>
-    set((state) => {
-      const nextXp = state.xp + amount;
-      if (nextXp >= state.xpToNext) {
-        return {
-          xp: nextXp - state.xpToNext,
-          level: state.level + 1,
-          xpToNext: Math.round(state.xpToNext * 1.15),
-        };
-      }
-      return { xp: nextXp };
-    }),
 }));
