@@ -3,6 +3,7 @@ import { localDateKey } from '../lib/missionGenerator';
 import { totalXpFromProgress } from '../lib/progression';
 import { usePlayerStore } from '../stores/usePlayerStore';
 import { useProgressStore } from '../stores/useProgressStore';
+import { LifeProgressPanel } from './LifeProgressPanel';
 import { RankBadge } from './game/RankBadge';
 import { XpBar } from './game/XpBar';
 
@@ -81,6 +82,8 @@ export function ProgressView() {
           <dd>{completionStats.totalCompleted}</dd>
         </div>
       </dl>
+
+      <LifeProgressPanel />
 
       <div className="week-progress">
         <div className="section-heading">

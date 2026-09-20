@@ -2,6 +2,46 @@
 
 Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 
+## [0.3.2] - 2026-09-20
+
+### Adicionado
+- Life Event Engine com contrato canônico para atividade real.
+- Fontes `MANUAL`, `SYSTEM` e `HEALTH_CONNECT`.
+- Persistência de Condicionamento, Força, Mobilidade e Constância.
+- Tabela `life_event` com `dedupe_key` única para idempotência.
+- Migration SQLite 4.
+- Trigger para aplicar pontos de atributo no registro de eventos.
+- Backfill e reconciliação das missões já concluídas.
+- Serviço de conclusão que registra evento sem duplicar XP.
+- Contratos preparados para distância e duração vindas do Health Connect.
+- Atributos e eventos recentes na tela Progresso.
+- Documento técnico `docs/LIFE_EVENT_ENGINE.md`.
+
+### Alterado
+- A arquitetura passa a usar o pipeline `vida real → evento → regra → progressão`.
+- A conclusão manual passa pelo mesmo motor preparado para fontes automáticas.
+- Produto reposicionado como RPG que usa a vida real como input.
+- README, PRODUCT e DESIGN atualizados para a nova direção.
+- Versões frontend, Rust e Tauri sincronizadas em 0.3.2.
+
+## [0.3.1] - 2026-09-20
+
+### Adicionado
+- HUD do jogador com nível, rank, XP, sequência e missões do dia.
+- Barra de XP animada.
+- Ranks visuais sem alterar a fórmula de progressão.
+- Missões apresentadas como quests.
+- Feedback imediato de conclusão e recompensa.
+- Overlay curto de level up.
+- Tela Progresso em formato de ficha de personagem.
+- Histórico visual dos últimos sete dias.
+- Navegação inferior refinada e compatível com safe area.
+- Transições discretas com suporte a `prefers-reduced-motion`.
+
+### Alterado
+- Perfil alinhado à linguagem visual da ficha do jogador.
+- Direção visual consolidada como RPG futurista sóbrio + HUD + fitness.
+
 ## [0.3.0] - 2026-09-20
 
 ### Adicionado
