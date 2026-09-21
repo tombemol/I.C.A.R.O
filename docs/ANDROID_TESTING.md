@@ -1,12 +1,25 @@
-# Testar o I.C.A.R.O. 0.4.1 no Android
+# Testar o I.C.A.R.O. 0.4.2 no Android
 
-A 0.4.1 usa APIs nativas, então o navegador serve para layout, mas não valida Health Connect.
+A 0.4.2 usa APIs nativas, então o navegador serve para layout, mas não valida Health Connect.
 
-## Compatibilidade Android 15+ / 16 KiB
+## Compatibilidade Android 15+ / 16 KiB e firmwares OEM
 
-O build Android usa NDK r28 e força alinhamento ELF de 16 KiB na biblioteca Rust. Isso evita o caso desagradavelmente moderno em que o APK instala normalmente e o Android encerra o processo antes mesmo de criar a WebView.
+A compatibilidade precisa existir em duas camadas, porque uma só seria simples demais para o ecossistema Android:
 
-O CI extrai `lib/arm64-v8a/libicaro_lib.so` do APK e valida os segmentos `LOAD`. Se algum voltar a ser ligado com alinhamento inferior a 16 KiB, a build falha e a release não é publicada.
+1. **ELF:** cada biblioteca nativa ARM64 precisa ter segmentos `LOAD` compatíveis com páginas de 16 KiB;
+2. **APK/ZIP:** as bibliotecas JNI precisam estar empacotadas e alinhadas corretamente dentro do APK.
+
+O build usa NDK `28.2.13676358`, força alinhamento ELF de 16 KiB, fixa o mesmo NDK no Gradle gerado e configura `jniLibs.useLegacyPackaging = false`.
+
+Além disso, o projeto gerado recebe `android.enableR8.fullMode=false` e desativa minificação agressiva em release. Isso reduz falsos positivos de alguns firmwares OEM que interpretam certas formas de otimização/obfuscação como "app hardening" incompatível.
+
+A CI executa `zipalign -c -P 16` no APK e inspeciona **todas** as bibliotecas em `lib/arm64-v8a/*.so`. Qualquer regressão impede a publicação da release.
+
+### Patch automático do projeto gerado
+
+`src-tauri/gen` continua fora do Git. Depois de `tauri android init`, o script `scripts/patch-android-generated.mjs` aplica automaticamente as configurações necessárias.
+
+Se o Android exibir o alerta **"técnicas de reforço de segurança não compatíveis"**, teste primeiro a release mais recente. O link **Ver histórico** do próprio alerta também é útil para distinguir uma falha de carregamento nativo de uma heurística OEM.
 
 ## Requisitos
 
