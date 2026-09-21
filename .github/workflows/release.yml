@@ -78,21 +78,45 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         run: npm run android:build -- --debug
 
-      - name: Verify 16 KiB native alignment
-        if: steps.check.outputs.exists == 'false'
+      - name: Verify Android package compatibility
         shell: bash
         run: |
-          APK="src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk"
-          LIB="/tmp/libicaro_lib.so"
-          unzip -p "$APK" "lib/arm64-v8a/libicaro_lib.so" > "$LIB"
-          "$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump" -p "$LIB" | tee /tmp/icaro-load-segments.txt
-          if awk '/^[[:space:]]*LOAD / && $0 !~ /align 2\*\*(14|15|16)/ { bad=1 } END { exit bad }' /tmp/icaro-load-segments.txt; then
-            echo "ARM64 native library is compatible with 16 KiB pages."
-          else
-            echo "Native library contains LOAD segments below 16 KiB alignment."
-            exit 1
-          fi
+          set -euo pipefail
 
+          APK="src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk"
+          GRADLE="src-tauri/gen/android/app/build.gradle.kts"
+          PROPS="src-tauri/gen/android/gradle.properties"
+          OBJDUMP="$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump"
+
+          test -f "$APK"
+          grep -Fq 'ndkVersion = "28.2.13676358"' "$GRADLE"
+          grep -Fq 'useLegacyPackaging = false' "$GRADLE"
+          grep -Fq 'android.enableR8.fullMode=false' "$PROPS"
+
+          ZIPALIGN="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name zipalign -print | sort -V | tail -n 1)"
+          test -x "$ZIPALIGN"
+          "$ZIPALIGN" -c -P 16 -v 4 "$APK"
+
+          mapfile -t LIBS < <(unzip -Z1 "$APK" | grep '^lib/arm64-v8a/.*\.so$')
+          test "${#LIBS[@]}" -gt 0
+
+          rm -rf /tmp/icaro-arm64
+          mkdir -p /tmp/icaro-arm64
+
+          for ENTRY in "${LIBS[@]}"; do
+            FILE="/tmp/icaro-arm64/$(basename "$ENTRY")"
+            unzip -p "$APK" "$ENTRY" > "$FILE"
+            LOADS="$("$OBJDUMP" -p "$FILE" | grep '^[[:space:]]*LOAD ' || true)"
+            printf '\n[%s]\n%s\n' "$ENTRY" "$LOADS"
+
+            test -n "$LOADS"
+            if printf '%s\n' "$LOADS" | grep -Eq 'align 2\*\*([0-9]|1[0-3])([^0-9]|$)'; then
+              echo "::error::Native library $ENTRY contains LOAD segments below 16 KiB alignment."
+              exit 1
+            fi
+          done
+
+          echo "APK ZIP alignment and all ARM64 native libraries are compatible with 16 KiB pages."
       - name: Prepare release asset
         if: steps.check.outputs.exists == 'false'
         env:
