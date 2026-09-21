@@ -64,7 +64,7 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         shell: bash
         run: |
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"
           NDK_DIR="$ANDROID_HOME/ndk/28.2.13676358"
           test -d "$NDK_DIR"
           echo "NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
