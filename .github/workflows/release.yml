@@ -60,12 +60,13 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         run: npm install
 
-      - name: Resolve Android NDK
+      - name: Install Android NDK r28
         if: steps.check.outputs.exists == 'false'
         shell: bash
         run: |
-          NDK_DIR=$(find "$ANDROID_HOME/ndk" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
-          test -n "$NDK_DIR"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"
+          NDK_DIR="$ANDROID_HOME/ndk/28.2.13676358"
+          test -d "$NDK_DIR"
           echo "NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
 
@@ -76,6 +77,21 @@ jobs:
       - name: Build Android APK
         if: steps.check.outputs.exists == 'false'
         run: npm run android:build -- --debug
+
+      - name: Verify 16 KiB native alignment
+        if: steps.check.outputs.exists == 'false'
+        shell: bash
+        run: |
+          APK="src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk"
+          LIB="/tmp/libicaro_lib.so"
+          unzip -p "$APK" "lib/arm64-v8a/libicaro_lib.so" > "$LIB"
+          "$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump" -p "$LIB" | tee /tmp/icaro-load-segments.txt
+          if awk '/^[[:space:]]*LOAD / && $0 !~ /align 2\*\*(14|15|16)/ { bad=1 } END { exit bad }' /tmp/icaro-load-segments.txt; then
+            echo "ARM64 native library is compatible with 16 KiB pages."
+          else
+            echo "Native library contains LOAD segments below 16 KiB alignment."
+            exit 1
+          fi
 
       - name: Prepare release asset
         if: steps.check.outputs.exists == 'false'
@@ -98,14 +114,14 @@ jobs:
           cat > RELEASE_NOTES.md <<EOF
           ## I.C.A.R.O. v${VERSION}
 
-          Primeira release pública instalável do I.C.A.R.O. para Android.
+          Hotfix de compatibilidade Android do I.C.A.R.O.
 
           ### Destaques
-          - Health Connect como fonte read-only de passos, distância e sessões de exercício
-          - Life Event Engine com proteção contra duplicidade
-          - XP, nível, streak e atributos persistentes
-          - Game feel e identidade visual do I.C.A.R.O.
-          - persistência local com SQLite
+          - Corrige falha de abertura em aparelhos Android 15+ com páginas de memória de 16 KiB
+          - Biblioteca Rust/ARM64 vinculada explicitamente com alinhamento compatível
+          - Build fixado no Android NDK r28
+          - CI e release agora validam os segmentos LOAD do binário antes de publicar o APK
+          - Health Connect e progressão da 0.4.0 preservados
 
           ### Android
           O arquivo anexado é um **APK universal de debug**, destinado a testes da versão atual em aparelhos Android.
