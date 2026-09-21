@@ -9,7 +9,7 @@
 
 Atividade registrada no Android vira evidência, passa por regras explícitas e só então pode virar missão concluída, atributo, XP, nível e histórico.
 
-[![Version](https://img.shields.io/badge/version-0.4.0-F0B74A?style=flat-square&labelColor=111113)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.1-F0B74A?style=flat-square&labelColor=111113)](./CHANGELOG.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/tombemol/I.C.A.R.O/ci.yml?branch=main&style=flat-square&label=build&labelColor=111113)](https://github.com/tombemol/I.C.A.R.O/actions/workflows/ci.yml)
 [![Android](https://img.shields.io/badge/Android-Health%20Connect-F0B74A?style=flat-square&labelColor=111113)](./docs/ANDROID_TESTING.md)
 [![Tauri](https://img.shields.io/badge/Tauri-2-F0B74A?style=flat-square&labelColor=111113)](https://tauri.app/)
@@ -40,6 +40,12 @@ O objetivo é reduzir a distância entre **o que aconteceu de verdade** e **o qu
 > **XP mostra quanto você evoluiu. Atributos mostram como você evoluiu.**
 
 ---
+
+## 0.4.1 · Android compatibility hotfix
+
+A 0.4.1 corrige a inicialização em aparelhos Android 15+ que usam páginas de memória de **16 KiB**. O binário ARM64 agora é ligado com alinhamento compatível, o pipeline usa NDK r28 e a própria CI inspeciona a biblioteca nativa antes de publicar o APK.
+
+A integração Health Connect e as regras de progressão da 0.4.0 continuam iguais.
 
 ## 0.4.0 · Health Connect
 
@@ -161,6 +167,7 @@ flowchart TD
 | `0.3.1` | Game Feel | ✅ |
 | `0.3.2` | Life Event Engine e atributos | ✅ |
 | `0.4.0` | Health Connect como fonte real | ✅ |
+| `0.4.1` | Hotfix Android 15+ / páginas de 16 KiB | ✅ |
 | `0.4.x` | Mais regras e sincronização refinada | 🔨 |
 | `0.5.0` | Progressão profunda, marcos e visualizações | ◻️ |
 | `0.6.0` | Notificações e distribuição | ◻️ |
@@ -238,7 +245,7 @@ A referência de qualidade visual do projeto é [Impeccable](https://impeccable.
 
 ### Suba. Mas deixe os dados provarem.
 
-**I.C.A.R.O. · v0.4.0**
+**I.C.A.R.O. · v0.4.1**
 
 <sub>Projeto open source. Não é um dispositivo médico nem substitui orientação profissional de saúde.</sub>
 
