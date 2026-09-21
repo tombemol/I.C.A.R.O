@@ -2,6 +2,19 @@
 
 Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 
+## [0.4.2] - 2026-09-21
+
+### Corrigido
+- Compatibilidade Android ampliada para firmwares OEM que podem encerrar o app com o aviso de "técnicas de reforço de segurança".
+- O NDK `28.2.13676358` passa a ser fixado também no projeto Gradle gerado, não apenas no ambiente de build.
+- Bibliotecas JNI passam a usar empacotamento moderno com `useLegacyPackaging = false`.
+- R8 passa a operar em modo de compatibilidade; minificação agressiva é desativada nos builds de release gerados enquanto o bug upstream permanece relevante.
+- A CI agora valida o alinhamento ZIP do APK com `zipalign -P 16` e inspeciona **todas** as bibliotecas ARM64, em vez de somente `libicaro_lib.so`.
+- O patch do projeto Android gerado é automatizado e reaplicado a cada `npm run android:init`.
+
+### Mantido
+- Health Connect read-only, Life Event Engine, XP, níveis, streak, atributos e dados locais permanecem inalterados.
+
 ## [0.4.1] - 2026-09-21
 
 ### Corrigido

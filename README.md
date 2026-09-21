@@ -9,7 +9,7 @@
 
 Atividade registrada no Android vira evidência, passa por regras explícitas e só então pode virar missão concluída, atributo, XP, nível e histórico.
 
-[![Version](https://img.shields.io/badge/version-0.4.1-F0B74A?style=flat-square&labelColor=111113)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.2-F0B74A?style=flat-square&labelColor=111113)](./CHANGELOG.md)
 [![CI](https://img.shields.io/github/actions/workflow/status/tombemol/I.C.A.R.O/ci.yml?branch=main&style=flat-square&label=build&labelColor=111113)](https://github.com/tombemol/I.C.A.R.O/actions/workflows/ci.yml)
 [![Android](https://img.shields.io/badge/Android-Health%20Connect-F0B74A?style=flat-square&labelColor=111113)](./docs/ANDROID_TESTING.md)
 [![Tauri](https://img.shields.io/badge/Tauri-2-F0B74A?style=flat-square&labelColor=111113)](https://tauri.app/)
@@ -41,9 +41,17 @@ O objetivo é reduzir a distância entre **o que aconteceu de verdade** e **o qu
 
 ---
 
-## 0.4.1 · Android compatibility hotfix
+## 0.4.2 · Android OEM compatibility
 
-A 0.4.1 corrige a inicialização em aparelhos Android 15+ que usam páginas de memória de **16 KiB**. O binário ARM64 agora é ligado com alinhamento compatível, o pipeline usa NDK r28 e a própria CI inspeciona a biblioteca nativa antes de publicar o APK.
+A 0.4.2 completa o hotfix Android depois de um daqueles momentos em que "o ELF está alinhado" não significa, infelizmente, "o APK inteiro está certo".
+
+Além do alinhamento de 16 KiB da biblioteca Rust, o projeto Android gerado agora fixa o **NDK r28**, usa **empacotamento JNI moderno**, mantém o **R8 em modo de compatibilidade** e a CI verifica tanto o alinhamento ZIP do APK quanto **todas** as bibliotecas nativas ARM64 antes de publicar uma release.
+
+Isso cobre também a classe de falha em que alguns firmwares OEM encerram o app antes da WebView e exibem um alerta sobre "técnicas de reforço de segurança".
+
+## 0.4.1 · Primeiro hotfix de 16 KiB
+
+A 0.4.1 introduziu a primeira camada da correção para aparelhos Android 15+ com páginas de memória de **16 KiB**: alinhamento ELF da biblioteca Rust, NDK r28 no pipeline e inspeção da `libicaro_lib.so`. A 0.4.2 completa o trabalho no nível de empacotamento do APK e compatibilidade OEM.
 
 A integração Health Connect e as regras de progressão da 0.4.0 continuam iguais.
 
@@ -167,7 +175,8 @@ flowchart TD
 | `0.3.1` | Game Feel | ✅ |
 | `0.3.2` | Life Event Engine e atributos | ✅ |
 | `0.4.0` | Health Connect como fonte real | ✅ |
-| `0.4.1` | Hotfix Android 15+ / páginas de 16 KiB | ✅ |
+| `0.4.1` | Primeiro hotfix Android 15+ / ELF 16 KiB | ✅ |
+| `0.4.2` | Empacotamento Android/OEM + validação integral do APK | ✅ |
 | `0.4.x` | Mais regras e sincronização refinada | 🔨 |
 | `0.5.0` | Progressão profunda, marcos e visualizações | ◻️ |
 | `0.6.0` | Notificações e distribuição | ◻️ |
@@ -245,7 +254,7 @@ A referência de qualidade visual do projeto é [Impeccable](https://impeccable.
 
 ### Suba. Mas deixe os dados provarem.
 
-**I.C.A.R.O. · v0.4.1**
+**I.C.A.R.O. · v0.4.2**
 
 <sub>Projeto open source. Não é um dispositivo médico nem substitui orientação profissional de saúde.</sub>
 
