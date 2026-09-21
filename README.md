@@ -51,7 +51,7 @@ Isso cobre também a classe de falha em que alguns firmwares OEM encerram o app 
 
 ## 0.4.1 · Primeiro hotfix de 16 KiB
 
-A 0.4.1 corrige a inicialização em aparelhos Android 15+ que usam páginas de memória de **16 KiB**. O binário ARM64 agora é ligado com alinhamento compatível, o pipeline usa NDK r28 e a própria CI inspeciona a biblioteca nativa antes de publicar o APK.
+A 0.4.1 introduziu a primeira camada da correção para aparelhos Android 15+ com páginas de memória de **16 KiB**: alinhamento ELF da biblioteca Rust, NDK r28 no pipeline e inspeção da `libicaro_lib.so`. A 0.4.2 completa o trabalho no nível de empacotamento do APK e compatibilidade OEM.
 
 A integração Health Connect e as regras de progressão da 0.4.0 continuam iguais.
 
