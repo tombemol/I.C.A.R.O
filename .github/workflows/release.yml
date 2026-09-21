@@ -79,6 +79,7 @@ jobs:
         run: npm run android:build -- --debug
 
       - name: Verify Android package compatibility
+        if: steps.check.outputs.exists == 'false'
         shell: bash
         run: |
           set -euo pipefail
@@ -141,11 +142,12 @@ jobs:
           Hotfix de compatibilidade Android do I.C.A.R.O.
 
           ### Destaques
-          - Corrige falha de abertura em aparelhos Android 15+ com páginas de memória de 16 KiB
-          - Biblioteca Rust/ARM64 vinculada explicitamente com alinhamento compatível
-          - Build fixado no Android NDK r28
-          - CI e release agora validam os segmentos LOAD do binário antes de publicar o APK
-          - Health Connect e progressão da 0.4.0 preservados
+          - Completa a correção de compatibilidade Android em firmwares OEM que exibem o alerta de "reforço de segurança"
+          - Fixa o NDK r28 também no projeto Gradle gerado
+          - Usa empacotamento JNI moderno, compatível com páginas de 16 KiB
+          - Mantém R8 em modo de compatibilidade e desativa minificação agressiva para builds de release
+          - CI valida o alinhamento ZIP do APK e todas as bibliotecas ARM64 antes de publicar
+          - Health Connect e progressão permanecem preservados
 
           ### Android
           O arquivo anexado é um **APK universal de debug**, destinado a testes da versão atual em aparelhos Android.
