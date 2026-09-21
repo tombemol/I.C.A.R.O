@@ -49,11 +49,12 @@ jobs:
       - name: Install
         run: npm install
 
-      - name: Resolve Android NDK
+      - name: Install Android NDK r28
         shell: bash
         run: |
-          NDK_DIR=$(find "$ANDROID_HOME/ndk" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
-          test -n "$NDK_DIR"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"
+          NDK_DIR="$ANDROID_HOME/ndk/28.2.13676358"
+          test -d "$NDK_DIR"
           echo "NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
 
@@ -63,10 +64,24 @@ jobs:
       - name: Android debug build
         run: npm run android:build -- --debug
 
+      - name: Verify 16 KiB native alignment
+        shell: bash
+        run: |
+          APK="src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk"
+          LIB="/tmp/libicaro_lib.so"
+          unzip -p "$APK" "lib/arm64-v8a/libicaro_lib.so" > "$LIB"
+          "$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump" -p "$LIB" | tee /tmp/icaro-load-segments.txt
+          if awk '/^[[:space:]]*LOAD / && $0 !~ /align 2\*\*(14|15|16)/ { bad=1 } END { exit bad }' /tmp/icaro-load-segments.txt; then
+            echo "ARM64 native library is compatible with 16 KiB pages."
+          else
+            echo "Native library contains LOAD segments below 16 KiB alignment."
+            exit 1
+          fi
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: icaro-0.4.0-debug-apk
+          name: icaro-0.4.1-debug-apk
           path: src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk
           if-no-files-found: error
           retention-days: 14
