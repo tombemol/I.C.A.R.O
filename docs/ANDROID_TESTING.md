@@ -1,6 +1,12 @@
-# Testar o I.C.A.R.O. 0.4.0 no Android
+# Testar o I.C.A.R.O. 0.4.1 no Android
 
-A 0.4.0 usa APIs nativas, então o navegador serve para layout, mas não valida Health Connect.
+A 0.4.1 usa APIs nativas, então o navegador serve para layout, mas não valida Health Connect.
+
+## Compatibilidade Android 15+ / 16 KiB
+
+O build Android usa NDK r28 e força alinhamento ELF de 16 KiB na biblioteca Rust. Isso evita o caso desagradavelmente moderno em que o APK instala normalmente e o Android encerra o processo antes mesmo de criar a WebView.
+
+O CI extrai `lib/arm64-v8a/libicaro_lib.so` do APK e valida os segmentos `LOAD`. Se algum voltar a ser ligado com alinhamento inferior a 16 KiB, a build falha e a release não é publicada.
 
 ## Requisitos
 
