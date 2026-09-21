@@ -2,6 +2,17 @@
 
 Todas as mudanças relevantes do I.C.A.R.O. serão documentadas aqui.
 
+## [0.4.1] - 2026-09-21
+
+### Corrigido
+- Compatibilidade de inicialização com Android 15+ em dispositivos que usam páginas de memória de 16 KiB.
+- Linkedição da biblioteca Rust Android com `max-page-size=16384` e `common-page-size=16384`.
+- Pipeline Android fixado no NDK r28 para evitar artefatos nativos de 4 KiB.
+- CI e publicação de release passam a inspecionar a `libicaro_lib.so` ARM64 e recusam APK incompatível.
+
+### Mantido
+- Health Connect read-only, Life Event Engine, XP, níveis, streak e atributos da 0.4.0 permanecem inalterados.
+
 ## [0.4.0] - 2026-09-20
 
 ### Adicionado
